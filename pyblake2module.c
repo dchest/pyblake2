@@ -190,6 +190,11 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
             goto err0;                                                      \
         }                                                                   \
         self->param.node_depth = node_depth;                                \
+        if (inner_size > bigname##_OUTBYTES) {                              \
+            PyErr_Format(PyExc_ValueError, "maximum inner_size is %d",      \
+                    bigname##_OUTBYTES);                                    \
+            goto err0;                                                      \
+        }                                                                   \
         self->param.inner_length = inner_size;                              \
                                                                             \
         /* Set key length. */                                               \
