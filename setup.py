@@ -3,7 +3,7 @@ from distutils.core import setup, Extension
 pyblake2 = Extension('pyblake2',
                    sources = [
                        'pyblake2module.c',
-                       'impl/blake2b-ref.c',
+                       'impl/blake2b-regs.c',
                        'impl/blake2s-ref.c',
                    ])
 
