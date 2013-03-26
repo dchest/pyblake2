@@ -23,7 +23,7 @@ Examples:
     >>> h = blake2b(digest_size = 20)
     >>> h.update(b'Take that, Keccak')
     >>> h.digest()
-    '\\x98\\xb37\\xfa\\xf5\\xbc\\tY\\xca\\x12\\x19\\x12\\xbd\\xfa\\xd8\\x13z\\xf9\\xffl'
+    '\x98\xb37\xfa\xf5\xbc\tY\xca\x12\x19\x12\xbd\xfa\xd8\x13z\xf9\xffl'
 
 
 Constructors:
