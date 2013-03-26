@@ -3,6 +3,12 @@ pyblake2
 
 !!! ALPHA VERSION !!!
 
+ * Contains BLAKE2b and BLAKE2s.
+ * Uses slower reference implementation.
+ * Tested with Python 2.7, doesn't work yet in 3.x.
+
+!!!
+
 pyblake2 is a Python extension module implementing BLAKE2 hash functions family
 with hashlib compatible interface.
 
