@@ -6,6 +6,7 @@ pyblake2
  * Contains BLAKE2b and BLAKE2s.
  * Uses slower reference implementation.
  * Tested with Python 2.7, doesn't work yet in 3.x.
+ * Needs proper documentation.
 
 !!!
 
@@ -23,6 +24,17 @@ Examples:
     >>> h.update(b'Take that, Keccak')
     >>> h.digest()
     '\\x98\\xb37\\xfa\\xf5\\xbc\\tY\\xca\\x12\\x19\\x12\\xbd\\xfa\\xd8\\x13z\\xf9\\xffl'
+
+
+Constructors:
+
+	blake2b(data=b'', digest_size=64, key=b'', salt=b'', person=b'',
+		fanout=1, depth=1, leaf_size=0, node_offset=0, node_depth=0,
+		inner_size=0, last_node=False) -> blake2b object
+
+	blake2s(data=b'', digest_size=32, key=b'', salt=b'', person=b'',
+		fanout=1, depth=1, leaf_size=0, node_offset=0, node_depth=0,
+		inner_size=0, last_node=False) -> blake2s object
 
 
 INSTALLATION
