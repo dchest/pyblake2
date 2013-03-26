@@ -23,7 +23,7 @@ PyDoc_STRVAR(blake2_module__doc__,
 "Examples:\n"
 "\n"
 "    >>> from pyblake2 import blake2s\n"
-"    >>> blake2b(b'cats').hexdigest()\n"
+"    >>> blake2s(b'cats').hexdigest()\n"
 "    'c473a8d190c3867bdaf6529e8d8531925e824cff07f17d489233fde665979f0c'\n"
 "\n"
 "    >>> from pyblake2 import blake2b\n"
@@ -369,7 +369,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 
 
 #if PY_MAJOR_VERSION >= 3
-#define PyInt_FromLong PyLong_FromLong
+# define PyInt_FromLong PyLong_FromLong
 #endif
 
 

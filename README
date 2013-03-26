@@ -16,7 +16,7 @@ with hashlib compatible interface.
 Examples:
 
     >>> from pyblake2 import blake2s
-    >>> blake2b(b'cats').hexdigest()
+    >>> blake2s(b'cats').hexdigest()
     'c473a8d190c3867bdaf6529e8d8531925e824cff07f17d489233fde665979f0c'
 
     >>> from pyblake2 import blake2b
