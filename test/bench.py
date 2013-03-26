@@ -34,7 +34,7 @@ def main():
         print("{0} bytes\n".format(size))
         for mod, fn in HASHES:
             mbs = measure(mod, fn, size)
-            print(" {0}.{1}\t {2:3.0f} MB/s".format(mod, fn, mbs))
+            print(" {0}.{1}    \t   {2:3.0f} MB/s".format(mod, fn, mbs))
         print("")
 
 if __name__ == "__main__":
