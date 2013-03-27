@@ -539,15 +539,15 @@ static struct PyMethodDef pyblake2_functions[] = {
 
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef pyblake2_module = {
-        PyModuleDef_HEAD_INIT,
-        "pyblake2",
-        pyblake2__doc__,
-        -1,
-        pyblake2_functions,
-        NULL,
-        NULL,
-        NULL,
-        NULL
+    PyModuleDef_HEAD_INIT,
+    "pyblake2",
+    pyblake2__doc__,
+    -1,
+    pyblake2_functions,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 # define INIT_FUNC_NAME PyInit_pyblake2
 # define INIT_ERROR     return NULL
