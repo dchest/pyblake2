@@ -4,7 +4,7 @@ pyblake2
 !!! ALPHA VERSION !!!
 
  * Contains BLAKE2b and BLAKE2s.
- * Uses slower reference implementation.
+ * Doesn't use SSE implementations yet.
  * Needs proper documentation.
 
 !!!
