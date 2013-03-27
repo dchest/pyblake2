@@ -360,24 +360,28 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
  * Getters.
  */
 
+#if PY_MAJOR_VERSION >= 3
+# define Compat_PyInt_FromLong          PyLong_FromLong
+# define Compat_PyString_FromString     PyUnicode_FromString
+#else
+# define Compat_PyInt_FromLong          PyInt_FromLong
+# define Compat_PyString_FromString     PyString_FromString
+#endif
+
+
 #define DECL_PY_BLAKE2_GET_NAME(name)                       \
     static PyObject *                                       \
     py_##name##_get_name(name##Object *self, void *closure) \
     {                                                       \
-        return PyUnicode_FromString("" #name "");           \
+        return Compat_PyString_FromString("" #name "");     \
     }
-
-
-#if PY_MAJOR_VERSION >= 3
-# define PyInt_FromLong PyLong_FromLong
-#endif
 
 
 #define DECL_PY_BLAKE2_GET_BLOCK_SIZE(name, bigname)                \
     static PyObject *                                               \
     py_##name##_get_block_size(name##Object *self, void *closure)   \
     {                                                               \
-            return PyInt_FromLong(bigname##_BLOCKBYTES);            \
+        return Compat_PyInt_FromLong(bigname##_BLOCKBYTES);         \
     }
 
 
@@ -385,7 +389,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                               \
     py_##name##_get_digest_size(name##Object *self, void *closure)  \
     {                                                               \
-            return PyInt_FromLong(self->param.digest_length);       \
+        return Compat_PyInt_FromLong(self->param.digest_length);    \
     }
 
 
