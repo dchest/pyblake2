@@ -421,7 +421,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 #define DECL_PY_BLAKE2_TYPE_OBJECT(name)                    \
     static PyTypeObject name##Type = {                      \
         PyVarObject_HEAD_INIT(NULL, 0)                      \
-        "blake2." #name,          /* tp_name            */  \
+        "pyblake2." #name,        /* tp_name            */  \
         sizeof(name##Object),     /* tp_size            */  \
         0,                        /* tp_itemsize        */  \
         py_##name##_dealloc,      /* tp_dealloc         */  \
