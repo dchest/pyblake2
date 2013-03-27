@@ -16,7 +16,7 @@
 #include "impl/blake2.h"
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
 
-PyDoc_STRVAR(blake2_module__doc__,
+PyDoc_STRVAR(pyblake2__doc__,
 "pyblake2 is an extension module implementing BLAKE2 hash functions family\n"
 "with hashlib compatible interface.\n"
 "\n"
@@ -94,6 +94,20 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 #define blake2bp_set_node_offset    blake2b_set_node_offset
 #define blake2sp_set_node_offset    blake2s_set_node_offset
 
+/*
+ * Python 2-3 compatibility macros.
+ */
+#if PY_MAJOR_VERSION >= 3
+# define Compat_PyInt_FromLong              PyLong_FromLong
+# define Compat_PyString_FromString         PyUnicode_FromString
+# define Compat_PyString_FromStringAndSize  PyUnicode_FromStringAndSize
+# define Compat_PyBytes_FromStringAndSize   PyBytes_FromStringAndSize
+#else
+# define Compat_PyInt_FromLong              PyInt_FromLong
+# define Compat_PyString_FromString         PyString_FromString
+# define Compat_PyString_FromStringAndSize  PyString_FromStringAndSize
+# define Compat_PyBytes_FromStringAndSize   PyString_FromStringAndSize
+#endif
 
 /*
  * Unleash the macros!
@@ -318,7 +332,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                             \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
                                                                             \
-        return PyString_FromStringAndSize((const char *)digest,             \
+        return Compat_PyBytes_FromStringAndSize((const char *)digest,       \
                 self->param.digest_length);                                 \
     }
 
@@ -338,7 +352,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         tohex(hexdigest, digest, self->param.digest_length);                \
                                                                             \
-        return PyString_FromStringAndSize((const char *)hexdigest,          \
+        return Compat_PyString_FromStringAndSize((const char *)hexdigest,   \
                 self->param.digest_length * 2);                             \
     }
 
@@ -359,15 +373,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 /*
  * Getters.
  */
-
-#if PY_MAJOR_VERSION >= 3
-# define Compat_PyInt_FromLong          PyLong_FromLong
-# define Compat_PyString_FromString     PyUnicode_FromString
-#else
-# define Compat_PyInt_FromLong          PyInt_FromLong
-# define Compat_PyString_FromString     PyString_FromString
-#endif
-
 
 #define DECL_PY_BLAKE2_GET_NAME(name)                       \
     static PyObject *                                       \
@@ -524,8 +529,7 @@ DECL_BLAKE2_WRAPPER(blake2s, BLAKE2S)
 /*
  * Module.
  */
-
-static struct PyMethodDef blake2_functions[] = {
+static struct PyMethodDef pyblake2_functions[] = {
     {"blake2b", (PyCFunction)py_blake2b_new, METH_VARARGS|METH_KEYWORDS,
         py_blake2b_new__doc__},
     {"blake2s", (PyCFunction)py_blake2s_new, METH_VARARGS|METH_KEYWORDS,
@@ -533,18 +537,40 @@ static struct PyMethodDef blake2_functions[] = {
     {NULL, NULL}
 };
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef pyblake2_module = {
+        PyModuleDef_HEAD_INIT,
+        "pyblake2",
+        pyblake2__doc__,
+        -1,
+        pyblake2_functions,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+# define INIT_FUNC_NAME PyInit_pyblake2
+# define INIT_ERROR     return NULL
+#else
+# define INIT_FUNC_NAME initpyblake2
+# define INIT_ERROR     return
+#endif
+
 PyMODINIT_FUNC
-initpyblake2(void)
+INIT_FUNC_NAME(void)
 {
     Py_TYPE(&blake2bType) = &PyType_Type;
     if (PyType_Ready(&blake2bType) < 0)
-        return;
+        INIT_ERROR;
 
     Py_TYPE(&blake2sType) = &PyType_Type;
     if (PyType_Ready(&blake2sType) < 0)
-        return;
+        INIT_ERROR;
 
     /* TODO: do runtime self-check */
-
-    (void)Py_InitModule3("pyblake2", blake2_functions, blake2_module__doc__);
+#if PY_MAJOR_VERSION >= 3
+    return PyModule_Create(&pyblake2_module);
+#else
+    (void)Py_InitModule3("pyblake2", pyblake2_functions, pyblake2__doc__);
+#endif
 }
