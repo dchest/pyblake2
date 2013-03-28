@@ -34,6 +34,7 @@ PyDoc_STRVAR(pyblake2__doc__,
 "\\xd8\\x13z\\xf9\\xffl'\n"
 );
 
+
 /*
  * Python 2-3 compatibility macros.
  */
@@ -48,7 +49,7 @@ PyDoc_STRVAR(pyblake2__doc__,
 # define Compat_PyString_FromString         PyString_FromString
 # define Compat_PyString_FromStringAndSize  PyString_FromStringAndSize
 # define Compat_PyBytes_FromStringAndSize   PyString_FromStringAndSize
-#define  BYTES_FMT                          "s"
+# define BYTES_FMT                          "s"
 #endif
 
 
@@ -59,7 +60,11 @@ PyDoc_STRVAR(pyblake2__doc__,
 static void
 tohex(char *dst, uint8_t *src, size_t srclen)
 {
+#if PY_VERSION_HEX > 0x03030000
+# define alphabet Py_hexdigits
+#else
     static char alphabet[] = "0123456789abcdef";
+#endif
     size_t i;
 
     for (i = 0; i < srclen; i++) {
