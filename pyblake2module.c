@@ -82,7 +82,8 @@ static char *init_kwlist[] = {
 
 /* Arguments format string for constructors. */
 /* XXX no overflow checking for leaf_size and node_offset. */
-# define INIT_ARG_FMT "|" BYTES_FMT "*b" BYTES_FMT "*" BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
+# define INIT_ARG_FMT   "|" BYTES_FMT "*b" BYTES_FMT "*" \
+                        BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
 
 /*
  * Helpers for setting node offset.
