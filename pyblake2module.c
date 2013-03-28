@@ -91,7 +91,7 @@ PyDoc_STRVAR(pyblake2__doc__,
 # define FREE_LOCK(obj)
 #endif /* !WITH_THREAD */
 
-static int
+static inline int
 getbuffer(PyObject *obj, Py_buffer *bp) {
     if (PyUnicode_Check(obj)) {
         PyErr_SetString(PyExc_TypeError,
@@ -114,7 +114,6 @@ getbuffer(PyObject *obj, Py_buffer *bp) {
     }
     return 1;
 }
-
 
 static void
 tohex(char *dst, uint8_t *src, size_t srclen)
