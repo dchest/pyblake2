@@ -22,10 +22,20 @@ class HashTest(unittest.TestCase):
 
 
 class BLAKE2bTest(HashTest):
+    hash = blake2b()
+
     def test_constructor(self):
         self.assertRaises(ValueError, lambda: blake2b(digest_size = 65))
+        self.assertRaises(ValueError, lambda: blake2b(key = b'x'*65))
+        self.assertRaises(ValueError, lambda: blake2b(salt = b'x'*17))
+        self.assertRaises(ValueError, lambda: blake2b(person = b'x'*17))
 
-    hash = blake2b()
+    def test_digest_size(self):
+        self.assertEqual(self.hash.digest_size, 64)
+
+    def test_block_size(self):
+        self.assertEqual(self.hash.block_size, 128)
+
     vectors = [
         "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce",
         "2fa3f686df876995167e7c2e5d74c4c7b6e48f8068fe0e44208344d480f7904c36963e44115fe3eb2a3ac8694c28bcb4f5a0f3276f2e79487d8219057a506e4b",
@@ -549,10 +559,20 @@ class BLAKE2bKeyedTest(HashTest):
 
 
 class BLAKE2sTest(HashTest):
+    hash = blake2s()
+
     def test_constructor(self):
         self.assertRaises(ValueError, lambda: blake2s(digest_size = 33))
+        self.assertRaises(ValueError, lambda: blake2s(key = b'x'*33))
+        self.assertRaises(ValueError, lambda: blake2s(salt = b'x'*9))
+        self.assertRaises(ValueError, lambda: blake2s(person = b'x'*9))
 
-    hash = blake2s()
+    def test_digest_size(self):
+        self.assertEqual(self.hash.digest_size, 32)
+
+    def test_block_size(self):
+        self.assertEqual(self.hash.block_size, 64)
+
     vectors = [
         "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
         "e34d74dbaf4ff4c6abd871cc220451d2ea2648846c7757fbaac82fe51ad64bea",

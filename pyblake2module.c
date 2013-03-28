@@ -212,7 +212,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                       digest_size = bigname##_OUTBYTES;                     \
                                                                             \
         /* Initialize buffers. */                                           \
-        key.buf = salt.buf = person.buf = NULL;                                                  \
+        key.buf = salt.buf = person.buf = NULL;                             \
                                                                             \
         /* Parse arguments. */                                              \
         if (!PyArg_ParseTupleAndKeywords(args, kw, INIT_ARG_FMT ":"#name"", \
@@ -246,7 +246,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                             \
         /* Set personalization parameter. */                                \
         if (person.buf != NULL) {                                           \
-            if (salt.len > bigname##_PERSONALBYTES) {                       \
+            if (person.len > bigname##_PERSONALBYTES) {                     \
                 PyErr_Format(PyExc_ValueError,                              \
                     "maximum person length is %d bytes",                    \
                     bigname##_PERSONALBYTES);                               \
