@@ -52,10 +52,69 @@ PyDoc_STRVAR(pyblake2__doc__,
 # define BYTES_FMT                      "s"
 #endif
 
-
 /*
- * Common.
+ * Minimum size of buffer when updating hash
+ * object for GIL to be released.
  */
+#define GIL_MINSIZE 4096
+
+#ifdef WITH_THREAD
+# include "pythread.h"
+# define OBJECT_LOCK_FIELD PyThread_type_lock lock;
+
+# define ENTER_PYBLAKE2(obj)                    \
+    if ((obj)->lock) {                          \
+        Py_BEGIN_ALLOW_THREADS                  \
+        PyThread_acquire_lock((obj)->lock, 1);  \
+        Py_END_ALLOW_THREADS                    \
+    }
+
+# define LEAVE_PYBLAKE2(obj)                    \
+    if ((obj)->lock) {                          \
+        PyThread_release_lock((obj)->lock);     \
+    }
+
+# define INIT_LOCK(obj) do {    \
+    (obj)->lock = NULL;         \
+} while(0)
+
+# define FREE_LOCK(obj)                     \
+    if ((obj)->lock) {                      \
+        PyThread_free_lock((obj)->lock);    \
+    }
+
+#else
+# define OBJECT_LOCK_FIELD
+# define ENTER_PYBLAKE2(obj)
+# define LEAVE_PYBLAKE2(obj)
+# define INIT_LOCK(obj)
+# define FREE_LOCK(obj)
+#endif /* !WITH_THREAD */
+
+static int
+getbuffer(PyObject *obj, Py_buffer *viewp) {
+    if (PyUnicode_Check(obj)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "Unicode-objects must be encoded before hashing");
+        return 0;
+    }
+    if (!PyObject_CheckBuffer(obj)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "object supporting the buffer API required");
+        return 0;
+    }
+
+    if (PyObject_GetBuffer(obj, viewp, PyBUF_SIMPLE) == -1)
+        return 0;
+
+    if ((viewp)->ndim > 1) {
+        PyErr_SetString(PyExc_BufferError, "Buffer must be single dimension");
+        PyBuffer_Release(viewp);
+        return 0;
+    }
+    return 1;
+}
+
 
 static void
 tohex(char *dst, uint8_t *src, size_t srclen)
@@ -82,8 +141,7 @@ static char *init_kwlist[] = {
 
 /* Arguments format string for constructors. */
 /* XXX no overflow checking for leaf_size and node_offset. */
-# define INIT_ARG_FMT   "|" BYTES_FMT "*b" BYTES_FMT "*" \
-                        BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
+# define INIT_ARG_FMT   "|Ob" BYTES_FMT "*" BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
 
 /*
  * Helpers for setting node offset.
@@ -127,14 +185,18 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         PyObject_HEAD                   \
         name##_param    param;          \
         name##_state    state;          \
+        OBJECT_LOCK_FIELD               \
     } name##Object;
 
 
-#define DECL_NEW_BLAKE2_OBJECT(name)                        \
-    static name##Object *                                   \
-    new_##name##Object(void)                                \
-    {                                                       \
-        return PyObject_New(name##Object, &name##Type);     \
+#define DECL_NEW_BLAKE2_OBJECT(name)                                    \
+    static name##Object *                                               \
+    new_##name##Object(void)                                            \
+    {                                                                   \
+        name##Object *obj;                                              \
+        obj = (name##Object *)PyObject_New(name##Object, &name##Type);  \
+        if (obj != NULL) INIT_LOCK(obj);                                \
+        return obj;                                                     \
     }
 
 
@@ -142,8 +204,8 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static int                                                              \
     init_##name##Object(name##Object *self, PyObject *args, PyObject *kw)   \
     {                                                                       \
-        Py_buffer data, key, salt, person;                                  \
-        PyObject *last_node_obj = NULL;                                     \
+        Py_buffer buf, key, salt, person;                                   \
+        PyObject *data = NULL, *last_node_obj = NULL;                       \
         unsigned int leaf_size = 0;                                         \
         unsigned PY_LONG_LONG node_offset = 0;                              \
         unsigned char node_depth = 0, inner_size = 0,                       \
@@ -151,7 +213,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                       digest_size = bigname##_OUTBYTES;                     \
                                                                             \
         /* Initialize buffers. */                                           \
-        data.buf = NULL;                                                    \
         key.buf = NULL;                                                     \
         salt.buf = NULL;                                                    \
         person.buf = NULL;                                                  \
@@ -250,12 +311,21 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         }                                                                   \
                                                                             \
         /* Process initial data if any. */                                  \
-        if (data.buf != NULL)                                               \
-            name##_update(&self->state, data.buf, data.len);                \
+        if (data != NULL) {                                                 \
+            if (!getbuffer(data, &buf))                                     \
+                goto err0;                                                  \
+                                                                            \
+            if (buf.len >= GIL_MINSIZE) {                                   \
+                Py_BEGIN_ALLOW_THREADS                                      \
+                name##_update(&self->state, buf.buf, buf.len);              \
+                Py_END_ALLOW_THREADS                                        \
+            } else {                                                        \
+                name##_update(&self->state, buf.buf, buf.len);              \
+            }                                                               \
+            PyBuffer_Release(&buf);                                         \
+        }                                                                   \
                                                                             \
         /* Release buffers. */                                              \
-        if (data.buf != NULL)                                               \
-            PyBuffer_Release(&data);                                        \
         if (key.buf != NULL)                                                \
             PyBuffer_Release(&key);                                         \
         if (salt.buf != NULL)                                               \
@@ -267,8 +337,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                             \
     err0:                                                                   \
         /* Error: release buffers. */                                       \
-        if (data.buf != NULL)                                               \
-            PyBuffer_Release(&data);                                        \
         if (key.buf != NULL)                                                \
             PyBuffer_Release(&key);                                         \
         if (salt.buf != NULL)                                               \
@@ -296,10 +364,46 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         if ((cpy = new_##name##Object()) == NULL)               \
             return NULL;                                        \
                                                                 \
+        ENTER_PYBLAKE2(self);                                   \
         cpy->param = self->param;                               \
         cpy->state = self->state;                               \
+        LEAVE_PYBLAKE2(self);                                   \
         return (PyObject *)cpy;                                 \
     }
+
+
+/*
+ * Macro used inside DECL_PY_BLAKE2_UPDATE:
+ */
+#ifdef WITH_THREAD
+/* With threads:
+ * Update hash object with buffer, releasing GIL if length of buffer
+ * is greater than or equal to GIL_MINSIZE.
+ */
+# define INNER_UPDATE(name) do {                                    \
+    if (self->lock == NULL && buf.len >= GIL_MINSIZE)               \
+        self->lock = PyThread_allocate_lock();                      \
+                                                                    \
+    if (self->lock != NULL) {                                       \
+       Py_BEGIN_ALLOW_THREADS                                       \
+       PyThread_acquire_lock(self->lock, 1);                        \
+       name##_update(&self->state, buf.buf, buf.len);               \
+       PyThread_release_lock(self->lock);                           \
+       Py_END_ALLOW_THREADS                                         \
+    } else {                                                        \
+        name##_update(&self->state, buf.buf, buf.len);              \
+    }                                                               \
+} while (0)
+
+#else
+/* Without threads:
+ * just update hash object with buffer.
+ */
+# define INNER_UPDATE(name) do {                                    \
+    name##_update(&self->state, buf.buf, buf.len);                  \
+} while (0)
+
+#endif /* !WITH_THREAD */
 
 
 #define DECL_PY_BLAKE2_UPDATE(name)                                         \
@@ -310,17 +414,17 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                                       \
     py_##name##_update(name##Object *self, PyObject *args)                  \
     {                                                                       \
-        Py_buffer data;                                                     \
+        PyObject  *obj;                                                     \
+        Py_buffer buf;                                                      \
                                                                             \
-        data.buf = NULL;                                                    \
-                                                                            \
-        if (!PyArg_ParseTuple(args, BYTES_FMT "*:update", &data))           \
+        if (!PyArg_ParseTuple(args, "O:update", &obj))                      \
             return NULL;                                                    \
                                                                             \
-        if (data.buf != NULL) {                                             \
-            name##_update(&self->state, data.buf, data.len);                \
-            PyBuffer_Release(&data);                                        \
-        }                                                                   \
+        if (!getbuffer(obj, &buf))                                          \
+            return NULL;                                                    \
+                                                                            \
+        INNER_UPDATE(name);                                                 \
+        PyBuffer_Release(&buf);                                             \
                                                                             \
         Py_INCREF(Py_None);                                                 \
         return Py_None;                                                     \
@@ -335,10 +439,12 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     py_##name##_digest(name##Object *self, PyObject *unused)                \
     {                                                                       \
         uint8_t digest[bigname##_OUTBYTES];                                 \
-        name##_state state_cpy = self->state;                               \
+        name##_state state_cpy;                                             \
                                                                             \
+        ENTER_PYBLAKE2(self);                                               \
+        state_cpy = self->state;                                            \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
-                                                                            \
+        LEAVE_PYBLAKE2(self);                                               \
         return BYTES_FROM_STRING_AND_SIZE((const char *)digest,             \
                 self->param.digest_length);                                 \
     }
@@ -354,11 +460,13 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     {                                                                       \
         uint8_t digest[bigname##_OUTBYTES];                                 \
         char hexdigest[sizeof(digest) * 2];                                 \
-        name##_state state_cpy = self->state;                               \
+        name##_state state_cpy;                                             \
                                                                             \
+        ENTER_PYBLAKE2(self);                                               \
+        state_cpy = self->state;                                            \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         tohex(hexdigest, digest, self->param.digest_length);                \
-                                                                            \
+        LEAVE_PYBLAKE2(self);                                               \
         return STRING_FROM_STRING_AND_SIZE((const char *)hexdigest,         \
                 self->param.digest_length * 2);                             \
     }
@@ -426,6 +534,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         /* Try not to leave state in memory. */                 \
         secure_zero_memory(&obj->param, sizeof(obj->param));    \
         secure_zero_memory(&obj->state, sizeof(obj->state));    \
+        FREE_LOCK(obj);                                         \
         PyObject_Del(self);                                     \
     }
 
