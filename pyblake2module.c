@@ -60,33 +60,37 @@ PyDoc_STRVAR(pyblake2__doc__,
 
 #ifdef WITH_THREAD
 # include "pythread.h"
+
 # define OBJECT_LOCK_FIELD PyThread_type_lock lock;
 
-# define ENTER_PYBLAKE2(obj)                    \
-    if ((obj)->lock) {                          \
-        Py_BEGIN_ALLOW_THREADS                  \
-        PyThread_acquire_lock((obj)->lock, 1);  \
-        Py_END_ALLOW_THREADS                    \
+# define ACQUIRE_LOCK(obj)                              \
+    if ((obj)->lock) {                                  \
+        if (!PyThread_acquire_lock((obj)->lock, 0)) {   \
+            Py_BEGIN_ALLOW_THREADS                      \
+            PyThread_acquire_lock((obj)->lock, 1);      \
+            Py_END_ALLOW_THREADS                        \
+        }                                               \
     }
 
-# define LEAVE_PYBLAKE2(obj)                    \
+# define RELEASE_LOCK(obj)                      \
     if ((obj)->lock) {                          \
         PyThread_release_lock((obj)->lock);     \
     }
 
 # define INIT_LOCK(obj) do {    \
     (obj)->lock = NULL;         \
-} while(0)
+} while (0)
 
 # define FREE_LOCK(obj)                     \
     if ((obj)->lock) {                      \
         PyThread_free_lock((obj)->lock);    \
+        (obj)->lock = NULL;                 \
     }
 
 #else
 # define OBJECT_LOCK_FIELD
-# define ENTER_PYBLAKE2(obj)
-# define LEAVE_PYBLAKE2(obj)
+# define ACQUIRE_LOCK(obj)
+# define RELEASE_LOCK(obj)
 # define INIT_LOCK(obj)
 # define FREE_LOCK(obj)
 #endif /* !WITH_THREAD */
@@ -361,10 +365,10 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         if ((cpy = new_##name##Object()) == NULL)               \
             return NULL;                                        \
                                                                 \
-        ENTER_PYBLAKE2(self);                                   \
+        ACQUIRE_LOCK(self);                                     \
         cpy->param = self->param;                               \
         cpy->state = self->state;                               \
-        LEAVE_PYBLAKE2(self);                                   \
+        RELEASE_LOCK(self);                                     \
         return (PyObject *)cpy;                                 \
     }
 
@@ -438,10 +442,10 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         uint8_t digest[bigname##_OUTBYTES];                                 \
         name##_state state_cpy;                                             \
                                                                             \
-        ENTER_PYBLAKE2(self);                                               \
+        ACQUIRE_LOCK(self);                                                 \
         state_cpy = self->state;                                            \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
-        LEAVE_PYBLAKE2(self);                                               \
+        RELEASE_LOCK(self);                                                 \
         return BYTES_FROM_STRING_AND_SIZE((const char *)digest,             \
                 self->param.digest_length);                                 \
     }
@@ -459,11 +463,11 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         char hexdigest[sizeof(digest) * 2];                                 \
         name##_state state_cpy;                                             \
                                                                             \
-        ENTER_PYBLAKE2(self);                                               \
+        ACQUIRE_LOCK(self);                                                 \
         state_cpy = self->state;                                            \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         tohex(hexdigest, digest, self->param.digest_length);                \
-        LEAVE_PYBLAKE2(self);                                               \
+        RELEASE_LOCK(self);                                                 \
         return STRING_FROM_STRING_AND_SIZE((const char *)hexdigest,         \
                 self->param.digest_length * 2);                             \
     }
