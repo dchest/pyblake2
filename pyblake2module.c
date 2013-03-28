@@ -35,6 +35,24 @@ PyDoc_STRVAR(pyblake2__doc__,
 );
 
 /*
+ * Python 2-3 compatibility macros.
+ */
+#if PY_MAJOR_VERSION >= 3
+# define Compat_PyInt_FromLong              PyLong_FromLong
+# define Compat_PyString_FromString         PyUnicode_FromString
+# define Compat_PyString_FromStringAndSize  PyUnicode_FromStringAndSize
+# define Compat_PyBytes_FromStringAndSize   PyBytes_FromStringAndSize
+# define BYTES_FMT                          "y"
+#else
+# define Compat_PyInt_FromLong              PyInt_FromLong
+# define Compat_PyString_FromString         PyString_FromString
+# define Compat_PyString_FromStringAndSize  PyString_FromStringAndSize
+# define Compat_PyBytes_FromStringAndSize   PyString_FromStringAndSize
+#define  BYTES_FMT                          "s"
+#endif
+
+
+/*
  * Common.
  */
 
@@ -59,7 +77,7 @@ static char *init_kwlist[] = {
 
 /* Arguments format string for constructors. */
 /* XXX no overflow checking for leaf_size and node_offset. */
-#define INIT_ARG_FMT "|s*bs*s*s*bbIKbbO"
+# define INIT_ARG_FMT "|" BYTES_FMT "*b" BYTES_FMT "*" BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
 
 /*
  * Helpers for setting node offset.
@@ -93,21 +111,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 
 #define blake2bp_set_node_offset    blake2b_set_node_offset
 #define blake2sp_set_node_offset    blake2s_set_node_offset
-
-/*
- * Python 2-3 compatibility macros.
- */
-#if PY_MAJOR_VERSION >= 3
-# define Compat_PyInt_FromLong              PyLong_FromLong
-# define Compat_PyString_FromString         PyUnicode_FromString
-# define Compat_PyString_FromStringAndSize  PyUnicode_FromStringAndSize
-# define Compat_PyBytes_FromStringAndSize   PyBytes_FromStringAndSize
-#else
-# define Compat_PyInt_FromLong              PyInt_FromLong
-# define Compat_PyString_FromString         PyString_FromString
-# define Compat_PyString_FromStringAndSize  PyString_FromStringAndSize
-# define Compat_PyBytes_FromStringAndSize   PyString_FromStringAndSize
-#endif
 
 /*
  * Unleash the macros!
@@ -307,7 +310,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                             \
         data.buf = NULL;                                                    \
                                                                             \
-        if (!PyArg_ParseTuple(args, "s*:update", &data))                    \
+        if (!PyArg_ParseTuple(args, BYTES_FMT "*:update", &data))           \
             return NULL;                                                    \
                                                                             \
         if (data.buf != NULL) {                                             \
