@@ -9,7 +9,7 @@ HASHES = [
     ("hashlib",  "sha512"),
 ]
 
-SIZES = [64, 128, 1024, 1000000]
+SIZES = [64, 128, 1024, 2047, 2048, 1000000]
 
 SETUP_CODE = """
 from {mod} import {fn} as hasher
