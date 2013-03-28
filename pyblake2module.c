@@ -60,7 +60,7 @@ PyDoc_STRVAR(pyblake2__doc__,
 static void
 tohex(char *dst, uint8_t *src, size_t srclen)
 {
-#if PY_VERSION_HEX > 0x03030000
+#if PY_VERSION_HEX >= 0x03030000
 # define alphabet Py_hexdigits
 #else
     static char alphabet[] = "0123456789abcdef";
