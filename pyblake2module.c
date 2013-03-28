@@ -96,8 +96,6 @@ blake2b_set_node_offset(blake2b_param *param, uint64_t offset)
     return 1;
 }
 
-char uint48[6];
-
 static inline int
 blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 {
