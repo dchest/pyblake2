@@ -212,7 +212,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                       digest_size = bigname##_OUTBYTES;                     \
                                                                             \
         /* Initialize buffers. */                                           \
-        key.buf = salt.buf = person.buf = NULL;                             \
+        key.buf = salt.buf = person.buf = NULL;                                                  \
                                                                             \
         /* Parse arguments. */                                              \
         if (!PyArg_ParseTupleAndKeywords(args, kw, INIT_ARG_FMT ":"#name"", \
@@ -242,7 +242,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                 goto err0;                                                  \
             }                                                               \
             memcpy(self->param.salt, salt.buf, salt.len);                   \
-            PyBuffer_Release(&salt);                                        \
         }                                                                   \
                                                                             \
         /* Set personalization parameter. */                                \
@@ -254,7 +253,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                 goto err0;                                                  \
             }                                                               \
             memcpy(self->param.personal, person.buf, person.len);           \
-            PyBuffer_Release(&person);                                      \
         }                                                                   \
                                                                             \
         /* Set tree parameters. */                                          \
@@ -307,7 +305,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
             memcpy(block, key.buf, key.len);                                \
             name##_update(&self->state, block, sizeof(block));              \
             secure_zero_memory(block, sizeof(block));                       \
-            PyBuffer_Release(&key);                                         \
         }                                                                   \
                                                                             \
         /* Process initial data if any. */                                  \
@@ -324,6 +321,14 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
             }                                                               \
             PyBuffer_Release(&buf);                                         \
         }                                                                   \
+                                                                            \
+        /* Release buffers. */                                              \
+        if (key.buf != NULL)                                                \
+            PyBuffer_Release(&key);                                         \
+        if (salt.buf != NULL)                                               \
+            PyBuffer_Release(&salt);                                        \
+        if (person.buf != NULL)                                             \
+            PyBuffer_Release(&person);                                      \
                                                                             \
         return 1;                                                           \
                                                                             \
