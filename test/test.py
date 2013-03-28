@@ -9,16 +9,33 @@ class HashTest(unittest.TestCase):
     hash = None
 
     def test_hexdigest(self):
+        """
+        Compares results of hashing bytes 0, 1, 2, ...
+        to the given test vectors.
+        """
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
             self.assertEqual(hc.hexdigest(), v)
 
     def test_digest(self):
+        """
+        Same as test_hexdigest(), but testing digest() output.
+        """
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
             self.assertEqual(hc.digest(), bytearray.fromhex(v))
+
+    def test_empty_bytes(self):
+        """
+        Checks that update() with zero-length string
+        gives the same answer as not updating.
+        """
+        h1 = self.hash.copy()
+        h2 = self.hash.copy()
+        h2.update(b'')
+        self.assertEqual(h1.digest(), h2.digest())
 
 
 class BLAKE2bTest(HashTest):
