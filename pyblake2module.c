@@ -39,17 +39,17 @@ PyDoc_STRVAR(pyblake2__doc__,
  * Python 2-3 compatibility macros.
  */
 #if PY_MAJOR_VERSION >= 3
-# define Compat_PyInt_FromLong              PyLong_FromLong
-# define Compat_PyString_FromString         PyUnicode_FromString
-# define Compat_PyString_FromStringAndSize  PyUnicode_FromStringAndSize
-# define Compat_PyBytes_FromStringAndSize   PyBytes_FromStringAndSize
-# define BYTES_FMT                          "y"
+# define INT_FROM_LONG                  PyLong_FromLong
+# define STRING_FROM_STRING             PyUnicode_FromString
+# define STRING_FROM_STRING_AND_SIZE    PyUnicode_FromStringAndSize
+# define BYTES_FROM_STRING_AND_SIZE     PyBytes_FromStringAndSize
+# define BYTES_FMT                      "y"
 #else
-# define Compat_PyInt_FromLong              PyInt_FromLong
-# define Compat_PyString_FromString         PyString_FromString
-# define Compat_PyString_FromStringAndSize  PyString_FromStringAndSize
-# define Compat_PyBytes_FromStringAndSize   PyString_FromStringAndSize
-# define BYTES_FMT                          "s"
+# define INT_FROM_LONG                  PyInt_FromLong
+# define STRING_FROM_STRING             PyString_FromString
+# define STRING_FROM_STRING_AND_SIZE    PyString_FromStringAndSize
+# define BYTES_FROM_STRING_AND_SIZE     PyString_FromStringAndSize
+# define BYTES_FMT                      "s"
 #endif
 
 
@@ -61,15 +61,15 @@ static void
 tohex(char *dst, uint8_t *src, size_t srclen)
 {
 #if PY_VERSION_HEX >= 0x03030000
-# define alphabet Py_hexdigits
+# define hexdigits Py_hexdigits
 #else
-    static char alphabet[] = "0123456789abcdef";
+    static char hexdigits[] = "0123456789abcdef";
 #endif
     size_t i;
 
     for (i = 0; i < srclen; i++) {
-        dst[i*2 + 0] = alphabet[(src[i] >> 4) & 0x0f];
-        dst[i*2 + 1] = alphabet[src[i] & 0x0f];
+        dst[i*2 + 0] = hexdigits[(src[i] >> 4) & 0x0f];
+        dst[i*2 + 1] = hexdigits[src[i] & 0x0f];
     }
 }
 
@@ -339,7 +339,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                             \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
                                                                             \
-        return Compat_PyBytes_FromStringAndSize((const char *)digest,       \
+        return BYTES_FROM_STRING_AND_SIZE((const char *)digest,             \
                 self->param.digest_length);                                 \
     }
 
@@ -359,7 +359,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         tohex(hexdigest, digest, self->param.digest_length);                \
                                                                             \
-        return Compat_PyString_FromStringAndSize((const char *)hexdigest,   \
+        return STRING_FROM_STRING_AND_SIZE((const char *)hexdigest,         \
                 self->param.digest_length * 2);                             \
     }
 
@@ -385,7 +385,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                       \
     py_##name##_get_name(name##Object *self, void *closure) \
     {                                                       \
-        return Compat_PyString_FromString("" #name "");     \
+        return STRING_FROM_STRING("" #name "");             \
     }
 
 
@@ -393,7 +393,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                               \
     py_##name##_get_block_size(name##Object *self, void *closure)   \
     {                                                               \
-        return Compat_PyInt_FromLong(bigname##_BLOCKBYTES);         \
+        return INT_FROM_LONG(bigname##_BLOCKBYTES);                 \
     }
 
 
@@ -401,7 +401,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                               \
     py_##name##_get_digest_size(name##Object *self, void *closure)  \
     {                                                               \
-        return Compat_PyInt_FromLong(self->param.digest_length);    \
+        return INT_FROM_LONG(self->param.digest_length);            \
     }
 
 
