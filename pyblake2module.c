@@ -56,7 +56,7 @@ PyDoc_STRVAR(pyblake2__doc__,
  * Minimum size of buffer when updating hash
  * object for GIL to be released.
  */
-#define GIL_MINSIZE 4096
+#define GIL_MINSIZE 2048
 
 #ifdef WITH_THREAD
 # include "pythread.h"
