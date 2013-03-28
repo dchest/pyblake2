@@ -92,7 +92,7 @@ PyDoc_STRVAR(pyblake2__doc__,
 #endif /* !WITH_THREAD */
 
 static int
-getbuffer(PyObject *obj, Py_buffer *viewp) {
+getbuffer(PyObject *obj, Py_buffer *bp) {
     if (PyUnicode_Check(obj)) {
         PyErr_SetString(PyExc_TypeError,
                         "Unicode-objects must be encoded before hashing");
@@ -104,12 +104,12 @@ getbuffer(PyObject *obj, Py_buffer *viewp) {
         return 0;
     }
 
-    if (PyObject_GetBuffer(obj, viewp, PyBUF_SIMPLE) == -1)
+    if (PyObject_GetBuffer(obj, bp, PyBUF_SIMPLE) == -1)
         return 0;
 
-    if ((viewp)->ndim > 1) {
+    if (bp->ndim > 1) {
         PyErr_SetString(PyExc_BufferError, "Buffer must be single dimension");
-        PyBuffer_Release(viewp);
+        PyBuffer_Release(bp);
         return 0;
     }
     return 1;
