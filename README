@@ -5,6 +5,7 @@ pyblake2
 
  * Contains BLAKE2b and BLAKE2s.
  * Doesn't use SSE implementations yet.
+ * Wasn't tested on Windows.
  * Needs proper documentation.
 
 !!!
