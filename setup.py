@@ -4,11 +4,13 @@ pyblake2 = Extension('pyblake2',
                    define_macros = [
                     # Which implementation to use for compression function:
                     ('BLAKE2_COMPRESS_REGS', '1'),  # fast portable
-                    #('BLAKE2_COMPRESS_SSE2', '1')  # x86 SSE2 (may be slower than 'regs')
-                    #('BLAKE2_COMPRESS_SSSE3', '1') # x86 SSSE3
-                    #('BLAKE2_COMPRESS_AVX', '1')   # x86 AVX
-                    #('BLAKE2_COMPRESS_XOP', '1')   # x86 XOP
+                    #('BLAKE2_COMPRESS_SSE2', '1'),  # x86 SSE2 (may be slower than 'regs')
+                    #('BLAKE2_COMPRESS_SSSE3', '1'), # x86 SSSE3
+                    #('BLAKE2_COMPRESS_AVX', '1'),   # x86 AVX
+                    #('BLAKE2_COMPRESS_XOP', '1'),   # x86 XOP
                    ],
+                   # Extra flags required for AVX:
+                   #extra_compile_args = ['-msse4.1'],
                    sources = [
                        'pyblake2module.c',
                        'impl/blake2b.c',
