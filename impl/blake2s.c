@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "blake2-config.h"
 #include "blake2.h"
 #include "blake2-impl.h"
 
@@ -37,6 +38,16 @@ static const uint8_t blake2s_sigma[10][16] =
   {  6, 15, 14,  9, 11,  3,  0,  8, 12,  2, 13,  7,  1,  4, 10,  5 } ,
   { 10,  2,  8,  4,  7,  6,  1,  5, 15, 11,  9, 14,  3, 12, 13 , 0 } ,
 };
+
+#ifdef BLAKE2_COMPRESS_SSE
+# include "blake2s-compress-sse.h"
+#else
+# ifdef BLAKE2_COMPRESS_REGS
+#  include "blake2s-compress-regs.h"
+# else
+#  include "blake2s-compress-ref.h"
+# endif
+#endif
 
 static inline int blake2s_set_lastnode( blake2s_state *S )
 {
@@ -205,67 +216,6 @@ int blake2s_init_key( blake2s_state *S, const uint8_t outlen, const void *key, c
   }
   return 0;
 }
-
-static int blake2s_compress( blake2s_state *S, const uint8_t block[BLAKE2S_BLOCKBYTES] )
-{
-  uint32_t m[16];
-  uint32_t v[16];
-
-  for( size_t i = 0; i < 16; ++i )
-    m[i] = load32( block + i * sizeof( m[i] ) );
-
-  for( size_t i = 0; i < 8; ++i )
-    v[i] = S->h[i];
-
-  v[ 8] = blake2s_IV[0];
-  v[ 9] = blake2s_IV[1];
-  v[10] = blake2s_IV[2];
-  v[11] = blake2s_IV[3];
-  v[12] = S->t[0] ^ blake2s_IV[4];
-  v[13] = S->t[1] ^ blake2s_IV[5];
-  v[14] = S->f[0] ^ blake2s_IV[6];
-  v[15] = S->f[1] ^ blake2s_IV[7];
-#define G(r,i,a,b,c,d) \
-  do { \
-    a = a + b + m[blake2s_sigma[r][2*i+0]]; \
-    d = rotr32(d ^ a, 16); \
-    c = c + d; \
-    b = rotr32(b ^ c, 12); \
-    a = a + b + m[blake2s_sigma[r][2*i+1]]; \
-    d = rotr32(d ^ a, 8); \
-    c = c + d; \
-    b = rotr32(b ^ c, 7); \
-  } while(0)
-#define ROUND(r)  \
-  do { \
-    G(r,0,v[ 0],v[ 4],v[ 8],v[12]); \
-    G(r,1,v[ 1],v[ 5],v[ 9],v[13]); \
-    G(r,2,v[ 2],v[ 6],v[10],v[14]); \
-    G(r,3,v[ 3],v[ 7],v[11],v[15]); \
-    G(r,4,v[ 0],v[ 5],v[10],v[15]); \
-    G(r,5,v[ 1],v[ 6],v[11],v[12]); \
-    G(r,6,v[ 2],v[ 7],v[ 8],v[13]); \
-    G(r,7,v[ 3],v[ 4],v[ 9],v[14]); \
-  } while(0)
-  ROUND( 0 );
-  ROUND( 1 );
-  ROUND( 2 );
-  ROUND( 3 );
-  ROUND( 4 );
-  ROUND( 5 );
-  ROUND( 6 );
-  ROUND( 7 );
-  ROUND( 8 );
-  ROUND( 9 );
-
-  for( size_t i = 0; i < 8; ++i )
-    S->h[i] = S->h[i] ^ v[i] ^ v[i + 8];
-
-#undef G
-#undef ROUND
-  return 0;
-}
-
 
 int blake2s_update( blake2s_state *S, const uint8_t *in, uint64_t inlen )
 {
