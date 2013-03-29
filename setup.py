@@ -9,7 +9,7 @@ pyblake2 = Extension('pyblake2',
                     #('BLAKE2_COMPRESS_AVX', '1'),   # x86 AVX
                     #('BLAKE2_COMPRESS_XOP', '1'),   # x86 XOP
                    ],
-                   # Extra flags required for AVX:
+                   # Extra flags.
                    #extra_compile_args = ['-msse4.1'],
                    sources = [
                        'pyblake2module.c',
