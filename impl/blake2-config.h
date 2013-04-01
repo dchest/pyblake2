@@ -1,6 +1,17 @@
 #ifndef __BLAKE2_CONFIG_H__
 #define __BLAKE2_CONFIG_H__
 
+#ifndef _MSC_VER
+# include <stdint.h>
+#else
+ typedef unsigned __int8  uint8_t;
+ typedef unsigned __int32 uint32_t;
+ typedef unsigned __int64 uint64_t;
+# ifndef inline
+#  define inline __forceinline
+# endif
+#endif
+
 // These don't work everywhere
 /*
 #if defined(__SSE2__)

@@ -14,12 +14,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
 
+#include "blake2-config.h"
 #include "blake2.h"
 #include "blake2-impl.h"
 

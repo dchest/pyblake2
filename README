@@ -1,10 +1,9 @@
 pyblake2
 ========
 
-!!! ALPHA VERSION !!!
+!!! BETA VERSION !!!
 
  * Contains BLAKE2b and BLAKE2s.
- * Wasn't tested on Windows.
  * Needs proper documentation.
  * SSE implementations must be manually turned on in setup.py.
 

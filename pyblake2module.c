@@ -11,7 +11,15 @@
 #include <Python.h>
 #include "structmember.h"
 
-#include <stdint.h> /* XXX MSVC? */
+#ifndef _MSC_VER
+# include <stdint.h>
+#else
+ typedef unsigned __int8  uint8_t;
+ typedef unsigned __int64 uint64_t;
+# ifndef inline
+#  define inline __forceinline
+# endif
+#endif
 
 #include "impl/blake2.h"
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
