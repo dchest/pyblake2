@@ -217,7 +217,7 @@ int blake2s_init_key( blake2s_state *S, const uint8_t outlen, const void *key, c
   return 0;
 }
 
-int blake2s_update( blake2s_state *S, const uint8_t *in, uint64_t inlen )
+int blake2s_update( blake2s_state *S, const uint8_t *in, size_t inlen )
 {
   while( inlen > 0 )
   {
@@ -271,7 +271,7 @@ int blake2s_final( blake2s_state *S, uint8_t *out, uint8_t outlen )
   return 0;
 }
 
-int blake2s( uint8_t *out, const void *in, const void *key, const uint8_t outlen, const uint64_t inlen, uint8_t keylen )
+int blake2s( uint8_t *out, const void *in, const void *key, const uint8_t outlen, const size_t inlen, uint8_t keylen )
 {
   blake2s_state S[1];
 

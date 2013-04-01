@@ -230,7 +230,7 @@ int blake2b_init_key( blake2b_state *S, const uint8_t outlen, const void *key, c
 }
 
 /* inlen now in bytes */
-int blake2b_update( blake2b_state *S, const uint8_t *in, uint64_t inlen )
+int blake2b_update( blake2b_state *S, const uint8_t *in, size_t inlen )
 {
   while( inlen > 0 )
   {
@@ -286,7 +286,7 @@ int blake2b_final( blake2b_state *S, uint8_t *out, uint8_t outlen )
 }
 
 /* inlen, at least, should be uint64_t. Others can be size_t. */
-int blake2b( uint8_t *out, const void *in, const void *key, const uint8_t outlen, const uint64_t inlen, uint8_t keylen )
+int blake2b( uint8_t *out, const void *in, const void *key, const uint8_t outlen, const size_t inlen, uint8_t keylen )
 {
   blake2b_state S[1];
 
