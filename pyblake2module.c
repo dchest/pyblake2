@@ -1,4 +1,3 @@
-/* vim: set expandtab ts=4 sw=4: */
 /*
  * Written in 2013 by Dmitry Chestnykh <dmitry@codingrobots.com>
  *
@@ -569,7 +568,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         0,                        /* tp_iter            */  \
         0,                        /* tp_iternext        */  \
         name##_methods,           /* tp_methods         */  \
-        NULL,                     /* tp_members         */  \
+        0,                        /* tp_members         */  \
         name##_getsetters,        /* tp_getset          */  \
     };
 
@@ -690,3 +689,5 @@ INIT_FUNC_NAME(void)
     (void)Py_InitModule3("pyblake2", pyblake2_functions, pyblake2__doc__);
 #endif
 }
+
+/* vim: set expandtab ts=4 sw=4: */

@@ -1,6 +1,7 @@
 """
 Simple script to see if GIL is released when hashing.
-"Threaded" benchmark should be ~2x as fast as sequential if it is.
+"Threaded" benchmark should be ~2x as fast as sequential
+if it is, but only on a multicore CPU.
 """
 
 import hashlib, threading, time
