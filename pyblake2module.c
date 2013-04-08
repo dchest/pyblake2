@@ -10,7 +10,6 @@
 #include <Python.h>
 #include "structmember.h"
 
-#include "impl/blake2-config.h"
 #include "impl/blake2.h"
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
 
