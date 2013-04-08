@@ -617,8 +617,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 /*
  * Declare objects.
  * Note: don't forget to update module init function and constants.
- *
- * TODO: more documentation.
  */
 
 PyDoc_STRVAR(py_blake2b_new__doc__,
