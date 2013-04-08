@@ -47,6 +47,12 @@ class BLAKE2bTest(HashTest):
         self.assertRaises(ValueError, lambda: blake2b(salt = b'x'*17))
         self.assertRaises(ValueError, lambda: blake2b(person = b'x'*17))
 
+    def test_constants(self):
+        self.assertEqual(BLAKE2B_SALT_SIZE, 16)
+        self.assertEqual(BLAKE2B_PERSON_SIZE, 16)
+        self.assertEqual(BLAKE2B_MAX_KEY_SIZE, 64)
+        self.assertEqual(BLAKE2B_MAX_DIGEST_SIZE, 64)
+
     def test_digest_size(self):
         self.assertEqual(self.hash.digest_size, 64)
 
@@ -583,6 +589,12 @@ class BLAKE2sTest(HashTest):
         self.assertRaises(ValueError, lambda: blake2s(key = b'x'*33))
         self.assertRaises(ValueError, lambda: blake2s(salt = b'x'*9))
         self.assertRaises(ValueError, lambda: blake2s(person = b'x'*9))
+
+    def test_constants(self):
+        self.assertEqual(BLAKE2S_SALT_SIZE, 8)
+        self.assertEqual(BLAKE2S_PERSON_SIZE, 8)
+        self.assertEqual(BLAKE2S_MAX_KEY_SIZE, 32)
+        self.assertEqual(BLAKE2S_MAX_DIGEST_SIZE, 32)
 
     def test_digest_size(self):
         self.assertEqual(self.hash.digest_size, 32)

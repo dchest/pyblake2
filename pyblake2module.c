@@ -15,8 +15,8 @@
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
 
 PyDoc_STRVAR(pyblake2__doc__,
-"pyblake2 is an extension module implementing BLAKE2 hash functions family\n"
-"with hashlib compatible interface.\n"
+"pyblake2 is an extension module implementing BLAKE2 hash function\n"
+"with hashlib-compatible interface.\n"
 "\n"
 "Examples:\n"
 "\n"
@@ -616,7 +616,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 
 /*
  * Declare objects.
- * Note: don't forget to update initblake2.
+ * Note: don't forget to update module init function and constants.
  *
  * TODO: more documentation.
  */
@@ -674,6 +674,8 @@ static struct PyModuleDef pyblake2_module = {
 PyMODINIT_FUNC
 INIT_FUNC_NAME(void)
 {
+    PyObject *m;
+
     Py_TYPE(&blake2bType) = &PyType_Type;
     if (PyType_Ready(&blake2bType) < 0)
         INIT_ERROR;
@@ -684,9 +686,25 @@ INIT_FUNC_NAME(void)
 
     /* TODO: do runtime self-check */
 #if PY_MAJOR_VERSION >= 3
-    return PyModule_Create(&pyblake2_module);
+    m = PyModule_Create(&pyblake2_module);
 #else
-    (void)Py_InitModule3("pyblake2", pyblake2_functions, pyblake2__doc__);
+    m = Py_InitModule3("pyblake2", pyblake2_functions, pyblake2__doc__);
+#endif
+
+    /* Add module constants. */
+
+    PyModule_AddIntConstant(m, "BLAKE2B_SALT_SIZE", BLAKE2B_SALTBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2B_PERSON_SIZE", BLAKE2B_PERSONALBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2B_MAX_KEY_SIZE", BLAKE2B_KEYBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2B_MAX_DIGEST_SIZE", BLAKE2B_OUTBYTES);
+
+    PyModule_AddIntConstant(m, "BLAKE2S_SALT_SIZE", BLAKE2S_SALTBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2S_PERSON_SIZE", BLAKE2S_PERSONALBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2S_MAX_KEY_SIZE", BLAKE2S_KEYBYTES);
+    PyModule_AddIntConstant(m, "BLAKE2S_MAX_DIGEST_SIZE", BLAKE2S_OUTBYTES);
+
+#if PY_MAJOR_VERSION >= 3
+    return m;
 #endif
 }
 
