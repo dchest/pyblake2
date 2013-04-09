@@ -79,8 +79,9 @@ Constructor functions also accept the following tree hashing parameters:
 .. figure:: tree.png
    :alt: Explanation of tree mode parameters.
 
-See "2.10 Tree hashing" in `BLAKE2 specification
-<https://blake2.net/blake2_20130129.pdf>`_ for comprehensive review.
+See section 2.10 in `BLAKE2 specification
+<https://blake2.net/blake2_20130129.pdf>`_ for comprehensive review of tree
+hashing.
 
 
 Using hash objects
