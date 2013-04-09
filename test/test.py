@@ -50,9 +50,11 @@ class BLAKE2bTest(HashTest):
         # Tree
         self.assertRaises(ValueError, blake2b, fanout = -1)
         self.assertRaises(ValueError, blake2b, fanout = 256)
+        self.assertRaises(TypeError,  blake2b, fanout = "str")
         self.assertRaises(ValueError, blake2b, depth = -1)
         self.assertRaises(ValueError, blake2b, depth = 0)
         self.assertRaises(ValueError, blake2b, depth = 256)
+        self.assertRaises(TypeError,  blake2b, depth = "str")
         self.assertRaises(ValueError, blake2b, node_depth = -1)
         self.assertRaises(ValueError, blake2b, node_depth = 256)
         self.assertRaises(ValueError, blake2b, inner_size = -1)
@@ -617,9 +619,11 @@ class BLAKE2sTest(HashTest):
         # Tree
         self.assertRaises(ValueError, blake2s, fanout = -1)
         self.assertRaises(ValueError, blake2s, fanout = 256)
+        self.assertRaises(TypeError,  blake2s, fanout = "str")
         self.assertRaises(ValueError, blake2s, depth = -1)
         self.assertRaises(ValueError, blake2s, depth = 0)
         self.assertRaises(ValueError, blake2s, depth = 256)
+        self.assertRaises(TypeError,  blake2s, depth = "str")
         self.assertRaises(ValueError, blake2s, node_depth = -1)
         self.assertRaises(ValueError, blake2s, node_depth = 256)
         self.assertRaises(ValueError, blake2s, inner_size = -1)
