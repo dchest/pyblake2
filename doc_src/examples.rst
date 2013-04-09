@@ -166,9 +166,10 @@ initialization, rather than as an input to each compression function.
 
 .. warning::
 
-    *Salted hashing* with BLAKE2 or any other general-purpose cryptographic
-    hash function, such as SHA-256, is not suitable for hashing passwords.
-    See `BLAKE2 FAQ <https://blake2.net/#qa>`_ for more information.
+    *Salted hashing* (or just hashing) with BLAKE2 or any other general-purpose
+    cryptographic hash function, such as SHA-256, is not suitable for hashing
+    passwords.  See `BLAKE2 FAQ <https://blake2.net/#qa>`_ for more
+    information.
 ..
 
     >>> import os

@@ -36,10 +36,10 @@ Constructor functions also accept these tree hashing parameters:
 
 * `fanout`: fanout (0 to 255, 0 if unlimited, 1 in sequential mode).
 
-* `depth`: maximal depth (1 to 255, 255 if unlimited, 1 in sequential
-  mode).
+* `depth`: maximal depth of tree (1 to 255, 255 if unlimited, 1 in
+  sequential mode).
 
-* `leaf_size`: leaf maximal byte length (0 to 2**32-1, 0 if unlimited or in
+* `leaf_size`: maximal byte length of leaf (0 to 2**32-1, 0 if unlimited or in
   sequential mode).
 
 * `node_offset`: node offset (0 to 2**64-1 for BLAKE2b, 0 to 2**48-1 for
@@ -53,7 +53,7 @@ Constructor functions also accept these tree hashing parameters:
 * `last_node`: boolean indicating whether the processed node is the last
   one (`False` for sequential mode).
 
-The following table shows the maximum sizes of parameters (in bytes):
+The following table shows the maximum sizes of general parameters (in bytes):
 
 ======= =========== ======== ========= ===========
 Hash    digest_size len(key) len(salt) len(person)
