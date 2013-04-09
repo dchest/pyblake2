@@ -37,15 +37,40 @@ class HashTest(unittest.TestCase):
         h2.update(b'')
         self.assertEqual(h1.digest(), h2.digest())
 
-
 class BLAKE2bTest(HashTest):
     hash = blake2b()
 
     def test_constructor(self):
-        self.assertRaises(ValueError, lambda: blake2b(digest_size = 65))
-        self.assertRaises(ValueError, lambda: blake2b(key = b'x'*65))
-        self.assertRaises(ValueError, lambda: blake2b(salt = b'x'*17))
-        self.assertRaises(ValueError, lambda: blake2b(person = b'x'*17))
+        self.assertRaises(ValueError, blake2b, digest_size = -1)
+        self.assertRaises(ValueError, blake2b, digest_size = 0)
+        self.assertRaises(ValueError, blake2b, digest_size = 65)
+        self.assertRaises(ValueError, blake2b, key = b'x'*65)
+        self.assertRaises(ValueError, blake2b, salt = b'x'*17)
+        self.assertRaises(ValueError, blake2b, person = b'x'*17)
+        # Tree
+        self.assertRaises(ValueError, blake2b, fanout = -1)
+        self.assertRaises(ValueError, blake2b, fanout = 256)
+        self.assertRaises(ValueError, blake2b, depth = -1)
+        self.assertRaises(ValueError, blake2b, depth = 0)
+        self.assertRaises(ValueError, blake2b, depth = 256)
+        self.assertRaises(ValueError, blake2b, node_depth = -1)
+        self.assertRaises(ValueError, blake2b, node_depth = 256)
+        self.assertRaises(ValueError, blake2b, inner_size = -1)
+        self.assertRaises(ValueError, blake2b, inner_size = 65)
+        # Must not raise:
+        blake2b(digest_size=1)
+        blake2b(digest_size=64)
+        blake2b(fanout=0)
+        blake2b(fanout=1)
+        blake2b(fanout=255)
+        blake2b(depth=1)
+        blake2b(depth=255)
+        blake2b(node_depth=0)
+        blake2b(node_depth=1)
+        blake2b(node_depth=255)
+        blake2b(inner_size=0)
+        blake2b(inner_size=64)
+
 
     def test_constants(self):
         self.assertEqual(BLAKE2B_SALT_SIZE, 16)
@@ -589,6 +614,29 @@ class BLAKE2sTest(HashTest):
         self.assertRaises(ValueError, lambda: blake2s(key = b'x'*33))
         self.assertRaises(ValueError, lambda: blake2s(salt = b'x'*9))
         self.assertRaises(ValueError, lambda: blake2s(person = b'x'*9))
+        # Tree
+        self.assertRaises(ValueError, blake2s, fanout = -1)
+        self.assertRaises(ValueError, blake2s, fanout = 256)
+        self.assertRaises(ValueError, blake2s, depth = -1)
+        self.assertRaises(ValueError, blake2s, depth = 0)
+        self.assertRaises(ValueError, blake2s, depth = 256)
+        self.assertRaises(ValueError, blake2s, node_depth = -1)
+        self.assertRaises(ValueError, blake2s, node_depth = 256)
+        self.assertRaises(ValueError, blake2s, inner_size = -1)
+        self.assertRaises(ValueError, blake2s, inner_size = 33)
+        # Must not raise:
+        blake2s(digest_size=1)
+        blake2s(digest_size=32)
+        blake2s(fanout=0)
+        blake2s(fanout=1)
+        blake2s(fanout=255)
+        blake2s(depth=1)
+        blake2s(depth=255)
+        blake2s(node_depth=0)
+        blake2s(node_depth=1)
+        blake2s(node_depth=255)
+        blake2s(inner_size=0)
+        blake2s(inner_size=32)
 
     def test_constants(self):
         self.assertEqual(BLAKE2S_SALT_SIZE, 8)

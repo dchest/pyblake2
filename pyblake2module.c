@@ -35,17 +35,19 @@ PyDoc_STRVAR(pyblake2__doc__,
  * Python 2-3 compatibility macros.
  */
 #if PY_MAJOR_VERSION >= 3
-# define INT_FROM_LONG                  PyLong_FromLong
-# define STRING_FROM_STRING             PyUnicode_FromString
-# define STRING_FROM_STRING_AND_SIZE    PyUnicode_FromStringAndSize
-# define BYTES_FROM_STRING_AND_SIZE     PyBytes_FromStringAndSize
-# define BYTES_FMT                      "y"
+# define COMPAT_PYINT_AS_LONG                    PyLong_AsLong
+# define COMPAT_PYINT_FROM_LONG                  PyLong_FromLong
+# define COMPAT_PYSTRING_FROM_STRING             PyUnicode_FromString
+# define COMPAT_PYSTRING_FROM_STRING_AND_SIZE    PyUnicode_FromStringAndSize
+# define COMPAT_PYBYTES_FROM_STRING_AND_SIZE     PyBytes_FromStringAndSize
+# define BYTES_FMT                              "y"
 #else
-# define INT_FROM_LONG                  PyInt_FromLong
-# define STRING_FROM_STRING             PyString_FromString
-# define STRING_FROM_STRING_AND_SIZE    PyString_FromStringAndSize
-# define BYTES_FROM_STRING_AND_SIZE     PyString_FromStringAndSize
-# define BYTES_FMT                      "s"
+# define COMPAT_PYINT_AS_LONG                    PyInt_AsLong
+# define COMPAT_PYINT_FROM_LONG                  PyInt_FromLong
+# define COMPAT_PYSTRING_FROM_STRING             PyString_FromString
+# define COMPAT_PYSTRING_FROM_STRING_AND_SIZE    PyString_FromStringAndSize
+# define COMPAT_PYBYTES_FROM_STRING_AND_SIZE     PyString_FromStringAndSize
+# define BYTES_FMT                              "s"
 #endif
 
 /*
@@ -131,17 +133,6 @@ tohex(char *dst, uint8_t *src, size_t srclen)
     }
 }
 
-/* Keywords list for constructors. */
-static char *init_kwlist[] = {
-    "data", "digest_size", "key", "salt", "person",
-    "fanout", "depth", "leaf_size", "node_offset",
-    "node_depth", "inner_size", "last_node", NULL
-};
-
-/* Arguments format string for constructors. */
-/* XXX no overflow checking for leaf_size and node_offset. */
-# define INIT_ARG_FMT   "|Ob" BYTES_FMT "*" BYTES_FMT "*" BYTES_FMT "*bbIKbbO"
-
 /*
  * Helpers for setting node offset.
  */
@@ -199,149 +190,195 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     }
 
 
-#define DECL_INIT_BLAKE2_OBJECT(name, bigname)                              \
-    static int                                                              \
-    init_##name##Object(name##Object *self, PyObject *args, PyObject *kw)   \
-    {                                                                       \
-        Py_buffer buf, key, salt, person;                                   \
-        PyObject *data = NULL, *last_node_obj = NULL;                       \
-        unsigned int leaf_size = 0;                                         \
-        unsigned PY_LONG_LONG node_offset = 0;                              \
-        unsigned char node_depth = 0, inner_size = 0,                       \
-                      fanout = 1, depth = 1,                                \
-                      digest_size = bigname##_OUTBYTES;                     \
-                                                                            \
-        /* Initialize buffers. */                                           \
-        key.buf = salt.buf = person.buf = NULL;                             \
-                                                                            \
-        /* Parse arguments. */                                              \
-        if (!PyArg_ParseTupleAndKeywords(args, kw, INIT_ARG_FMT ":"#name"", \
-                    init_kwlist, &data, &digest_size, &key, &salt, &person, \
-                    &fanout, &depth, &leaf_size, &node_offset, &node_depth, \
-                    &inner_size, &last_node_obj))                           \
-            goto err0;                                                      \
-                                                                            \
-        /* Zero parameter block. */                                         \
-        memset(&self->param, 0, sizeof(self->param));                       \
-                                                                            \
-        /* Set digest size. */                                              \
-        if (digest_size == 0 || digest_size > bigname##_OUTBYTES) {         \
-            PyErr_Format(PyExc_ValueError,                                  \
-                    "digest_size must be between 1 and %d bytes",           \
-                    bigname##_OUTBYTES);                                    \
-            goto err0;                                                      \
-        }                                                                   \
-        self->param.digest_length = digest_size;                            \
-                                                                            \
-        /* Set salt parameter. */                                           \
-        if (salt.buf != NULL) {                                             \
-            if (salt.len > bigname##_SALTBYTES) {                           \
-                PyErr_Format(PyExc_ValueError,                              \
-                    "maximum salt length is %d bytes",                      \
-                    bigname##_SALTBYTES);                                   \
-                goto err0;                                                  \
-            }                                                               \
-            memcpy(self->param.salt, salt.buf, salt.len);                   \
-        }                                                                   \
-                                                                            \
-        /* Set personalization parameter. */                                \
-        if (person.buf != NULL) {                                           \
-            if (person.len > bigname##_PERSONALBYTES) {                     \
-                PyErr_Format(PyExc_ValueError,                              \
-                    "maximum person length is %d bytes",                    \
-                    bigname##_PERSONALBYTES);                               \
-                goto err0;                                                  \
-            }                                                               \
-            memcpy(self->param.personal, person.buf, person.len);           \
-        }                                                                   \
-                                                                            \
-        /* Set tree parameters. */                                          \
-        self->param.fanout = fanout;                                        \
-        if (depth == 0) {                                                   \
-            PyErr_SetString(PyExc_ValueError,                               \
-                    "depth must be between 1 and 255");                     \
-            goto err0;                                                      \
-        }                                                                   \
-        self->param.depth = depth;                                          \
-        self->param.leaf_length = leaf_size;                                \
-        if (!name##_set_node_offset(&self->param, node_offset)) {           \
-            PyErr_SetString(PyExc_ValueError, "node offset is too large");  \
-            goto err0;                                                      \
-        }                                                                   \
-        self->param.node_depth = node_depth;                                \
-        if (inner_size > bigname##_OUTBYTES) {                              \
-            PyErr_Format(PyExc_ValueError, "maximum inner_size is %d",      \
-                    bigname##_OUTBYTES);                                    \
-            goto err0;                                                      \
-        }                                                                   \
-        self->param.inner_length = inner_size;                              \
-                                                                            \
-        /* Set key length. */                                               \
-        if (key.buf != NULL) {                                              \
-            if (key.len > bigname##_KEYBYTES) {                             \
-                PyErr_Format(PyExc_ValueError,                              \
-                    "maximum key length is %d bytes",                       \
-                    bigname##_KEYBYTES);                                    \
-                goto err0;                                                  \
-            }                                                               \
-            self->param.key_length = key.len;                               \
-        }                                                                   \
-                                                                            \
-        /* Initialize hash state. */                                        \
-        if (name##_init_param(&self->state, &self->param) < 0) {            \
-            PyErr_SetString(PyExc_RuntimeError,                             \
-                    "error initializing hash state");                       \
-            goto err0;                                                      \
-        }                                                                   \
-                                                                            \
-        /* Set last node flag (must come after initialization). */          \
-        self->state.last_node = (last_node_obj != NULL &&                   \
-                    PyObject_IsTrue(last_node_obj));                        \
-                                                                            \
-        /* Process key block if any. */                                     \
-        if (key.buf != NULL) {                                              \
-            uint8_t block[bigname##_BLOCKBYTES];                            \
-            memset(block, 0, sizeof(block));                                \
-            memcpy(block, key.buf, key.len);                                \
-            name##_update(&self->state, block, sizeof(block));              \
-            secure_zero_memory(block, sizeof(block));                       \
-        }                                                                   \
-                                                                            \
-        /* Process initial data if any. */                                  \
-        if (data != NULL) {                                                 \
-            if (!getbuffer(data, &buf))                                     \
-                goto err0;                                                  \
-                                                                            \
-            if (buf.len >= GIL_MINSIZE) {                                   \
-                Py_BEGIN_ALLOW_THREADS                                      \
-                name##_update(&self->state, buf.buf, buf.len);              \
-                Py_END_ALLOW_THREADS                                        \
-            } else {                                                        \
-                name##_update(&self->state, buf.buf, buf.len);              \
-            }                                                               \
-            PyBuffer_Release(&buf);                                         \
-        }                                                                   \
-                                                                            \
-        /* Release buffers. */                                              \
-        if (key.buf != NULL)                                                \
-            PyBuffer_Release(&key);                                         \
-        if (salt.buf != NULL)                                               \
-            PyBuffer_Release(&salt);                                        \
-        if (person.buf != NULL)                                             \
-            PyBuffer_Release(&person);                                      \
-                                                                            \
-        return 1;                                                           \
-                                                                            \
-    err0:                                                                   \
-        /* Error: release buffers. */                                       \
-        if (key.buf != NULL)                                                \
-            PyBuffer_Release(&key);                                         \
-        if (salt.buf != NULL)                                               \
-            PyBuffer_Release(&salt);                                        \
-        if (person.buf != NULL)                                             \
-            PyBuffer_Release(&person);                                      \
-                                                                            \
-        return 0;                                                           \
+#define DECL_INIT_BLAKE2_OBJECT(name, bigname)                                \
+    static int                                                                \
+    init_##name##Object(name##Object *self, PyObject *args, PyObject *kw)     \
+    {                                                                         \
+        Py_buffer buf, key, salt, person;                                     \
+        PyObject *data = NULL, *last_node_obj = NULL, *fanout_obj = NULL,     \
+                 *depth_obj = NULL;                                           \
+        unsigned int leaf_size = 0;                                           \
+        unsigned PY_LONG_LONG node_offset = 0;                                \
+        int node_depth = 0, inner_size = 0, digest_size = bigname##_OUTBYTES; \
+        long fanout = 1, depth = 1;                                           \
+                                                                              \
+        /* Initialize buffers. */                                             \
+        key.buf = salt.buf = person.buf = NULL;                               \
+                                                                              \
+        static char *kwlist[] = {                                             \
+            "data", "digest_size", "key", "salt", "person",                   \
+            "fanout", "depth", "leaf_size", "node_offset",                    \
+            "node_depth", "inner_size", "last_node", NULL                     \
+        };                                                                    \
+                                                                              \
+        /* Parse arguments. */                                                \
+        if (!PyArg_ParseTupleAndKeywords(args, kw,                            \
+                    "|"          /* following arguments are optional */       \
+                    "O"          /* `data` as PyObject */                     \
+                    "i"          /* `digest_size` as int */                   \
+                    BYTES_FMT"*" /* `key` as Py_buffer */                     \
+                    BYTES_FMT"*" /* `salt` as Py_buffer */                    \
+                    BYTES_FMT"*" /* `person` as Py_buffer */                  \
+                    "O"          /* `fanout` as PyObject */                   \
+                    "O"          /* `depth` as PyObject */                    \
+                    "I"          /* `leaf_size` as unsigned int */            \
+                    "K"          /* `node_offset` as unsigned PY_LONG_LONG*/  \
+                    "i"          /* `node_depth` as int */                    \
+                    "i"          /* `inner_size` as int */                    \
+                    "O"          /* `last_node` as PyObject */                \
+                    ":"#name"",  /* function name for errors */               \
+                    kwlist, &data, &digest_size, &key, &salt, &person,        \
+                    &fanout_obj, &depth_obj, &leaf_size, &node_offset,        \
+                    &node_depth, &inner_size, &last_node_obj))                \
+            goto err0;                                                        \
+                                                                              \
+        /* Zero parameter block. */                                           \
+        memset(&self->param, 0, sizeof(self->param));                         \
+                                                                              \
+        /* Set digest size. */                                                \
+        if (digest_size <= 0 || digest_size > bigname##_OUTBYTES) {           \
+            PyErr_Format(PyExc_ValueError,                                    \
+                    "digest_size must be between 1 and %d bytes",             \
+                    bigname##_OUTBYTES);                                      \
+            goto err0;                                                        \
+        }                                                                     \
+        self->param.digest_length = digest_size;                              \
+                                                                              \
+        /* Set salt parameter. */                                             \
+        if (salt.buf != NULL) {                                               \
+            if (salt.len > bigname##_SALTBYTES) {                             \
+                PyErr_Format(PyExc_ValueError,                                \
+                    "maximum salt length is %d bytes",                        \
+                    bigname##_SALTBYTES);                                     \
+                goto err0;                                                    \
+            }                                                                 \
+            memcpy(self->param.salt, salt.buf, salt.len);                     \
+        }                                                                     \
+                                                                              \
+        /* Set personalization parameter. */                                  \
+        if (person.buf != NULL) {                                             \
+            if (person.len > bigname##_PERSONALBYTES) {                       \
+                PyErr_Format(PyExc_ValueError,                                \
+                    "maximum person length is %d bytes",                      \
+                    bigname##_PERSONALBYTES);                                 \
+                goto err0;                                                    \
+            }                                                                 \
+            memcpy(self->param.personal, person.buf, person.len);             \
+        }                                                                     \
+                                                                              \
+        /* Set tree parameters. */                                            \
+        if (fanout_obj != NULL) {                                             \
+            fanout = COMPAT_PYINT_AS_LONG(fanout_obj);                        \
+            if (fanout == -1 && PyErr_Occurred())                             \
+                goto err0;                                                    \
+        }                                                                     \
+        if (fanout < 0 || fanout > 255) {                                     \
+            PyErr_SetString(PyExc_ValueError,                                 \
+                    "fanout must be between 0 and 255");                      \
+            goto err0;                                                        \
+        }                                                                     \
+        self->param.fanout = fanout;                                          \
+                                                                              \
+        if (depth_obj != NULL) {                                              \
+            depth = COMPAT_PYINT_AS_LONG(depth_obj);                          \
+            if (depth == -1 && PyErr_Occurred())                              \
+                goto err0;                                                    \
+        }                                                                     \
+        if (depth <= 0 || depth > 255) {                                      \
+            PyErr_SetString(PyExc_ValueError,                                 \
+                    "depth must be between 1 and 255");                       \
+            goto err0;                                                        \
+        }                                                                     \
+        self->param.depth = depth;                                            \
+                                                                              \
+        self->param.leaf_length = leaf_size;                                  \
+                                                                              \
+        if (!name##_set_node_offset(&self->param, node_offset)) {             \
+            PyErr_SetString(PyExc_ValueError, "node_offset is too large");    \
+            goto err0;                                                        \
+        }                                                                     \
+                                                                              \
+        if (node_depth < 0 || node_depth > 255) {                             \
+            PyErr_SetString(PyExc_ValueError,                                 \
+                    "node_depth must be between 0 and 255");                  \
+            goto err0;                                                        \
+        }                                                                     \
+        self->param.node_depth = node_depth;                                  \
+                                                                              \
+        if (inner_size < 0 || inner_size > bigname##_OUTBYTES) {              \
+            PyErr_Format(PyExc_ValueError,                                    \
+                    "inner_size must be between 0 and is %d",                 \
+                    bigname##_OUTBYTES);                                      \
+            goto err0;                                                        \
+        }                                                                     \
+        self->param.inner_length = inner_size;                                \
+                                                                              \
+        /* Set key length. */                                                 \
+        if (key.buf != NULL) {                                                \
+            if (key.len > bigname##_KEYBYTES) {                               \
+                PyErr_Format(PyExc_ValueError,                                \
+                    "maximum key length is %d bytes",                         \
+                    bigname##_KEYBYTES);                                      \
+                goto err0;                                                    \
+            }                                                                 \
+            self->param.key_length = key.len;                                 \
+        }                                                                     \
+                                                                              \
+        /* Initialize hash state. */                                          \
+        if (name##_init_param(&self->state, &self->param) < 0) {              \
+            PyErr_SetString(PyExc_RuntimeError,                               \
+                    "error initializing hash state");                         \
+            goto err0;                                                        \
+        }                                                                     \
+                                                                              \
+        /* Set last node flag (must come after initialization). */            \
+        self->state.last_node = (last_node_obj != NULL &&                     \
+                    PyObject_IsTrue(last_node_obj));                          \
+                                                                              \
+        /* Process key block if any. */                                       \
+        if (key.buf != NULL) {                                                \
+            uint8_t block[bigname##_BLOCKBYTES];                              \
+            memset(block, 0, sizeof(block));                                  \
+            memcpy(block, key.buf, key.len);                                  \
+            name##_update(&self->state, block, sizeof(block));                \
+            secure_zero_memory(block, sizeof(block));                         \
+        }                                                                     \
+                                                                              \
+        /* Process initial data if any. */                                    \
+        if (data != NULL) {                                                   \
+            if (!getbuffer(data, &buf))                                       \
+                goto err0;                                                    \
+                                                                              \
+            if (buf.len >= GIL_MINSIZE) {                                     \
+                Py_BEGIN_ALLOW_THREADS                                        \
+                name##_update(&self->state, buf.buf, buf.len);                \
+                Py_END_ALLOW_THREADS                                          \
+            } else {                                                          \
+                name##_update(&self->state, buf.buf, buf.len);                \
+            }                                                                 \
+            PyBuffer_Release(&buf);                                           \
+        }                                                                     \
+                                                                              \
+        /* Release buffers. */                                                \
+        if (key.buf != NULL)                                                  \
+            PyBuffer_Release(&key);                                           \
+        if (salt.buf != NULL)                                                 \
+            PyBuffer_Release(&salt);                                          \
+        if (person.buf != NULL)                                               \
+            PyBuffer_Release(&person);                                        \
+                                                                              \
+        return 1;                                                             \
+                                                                              \
+    err0:                                                                     \
+        /* Error: release buffers. */                                         \
+        if (key.buf != NULL)                                                  \
+            PyBuffer_Release(&key);                                           \
+        if (salt.buf != NULL)                                                 \
+            PyBuffer_Release(&salt);                                          \
+        if (person.buf != NULL)                                               \
+            PyBuffer_Release(&person);                                        \
+                                                                              \
+        return 0;                                                             \
     }
 
 
@@ -442,7 +479,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         state_cpy = self->state;                                            \
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         RELEASE_LOCK(self);                                                 \
-        return BYTES_FROM_STRING_AND_SIZE((const char *)digest,             \
+        return COMPAT_PYBYTES_FROM_STRING_AND_SIZE((const char *)digest,    \
                 self->param.digest_length);                                 \
     }
 
@@ -464,7 +501,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
         name##_final(&state_cpy, digest, self->param.digest_length);        \
         tohex(hexdigest, digest, self->param.digest_length);                \
         RELEASE_LOCK(self);                                                 \
-        return STRING_FROM_STRING_AND_SIZE((const char *)hexdigest,         \
+        return COMPAT_PYSTRING_FROM_STRING_AND_SIZE((const char *)hexdigest,\
                 self->param.digest_length * 2);                             \
     }
 
@@ -490,7 +527,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                       \
     py_##name##_get_name(name##Object *self, void *closure) \
     {                                                       \
-        return STRING_FROM_STRING("" #name "");             \
+        return COMPAT_PYSTRING_FROM_STRING("" #name "");    \
     }
 
 
@@ -498,7 +535,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                               \
     py_##name##_get_block_size(name##Object *self, void *closure)   \
     {                                                               \
-        return INT_FROM_LONG(bigname##_BLOCKBYTES);                 \
+        return COMPAT_PYINT_FROM_LONG(bigname##_BLOCKBYTES);        \
     }
 
 
@@ -506,7 +543,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     static PyObject *                                               \
     py_##name##_get_digest_size(name##Object *self, void *closure)  \
     {                                                               \
-        return INT_FROM_LONG(self->param.digest_length);            \
+        return COMPAT_PYINT_FROM_LONG(self->param.digest_length);   \
     }
 
 
