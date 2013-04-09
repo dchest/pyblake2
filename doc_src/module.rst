@@ -3,6 +3,9 @@ Module
 
 .. module:: pyblake2
 
+Creating hash objects
+---------------------
+
 New hash objects are created by calling constructor functions:
 
 
@@ -32,7 +35,27 @@ BLAKE2b or BLAKE2s. They optionally take these general parameters:
 * `person`: personalization string (up to 16 bytes for BLAKE2b, up to 8 bytes
   for BLAKE2s).
 
-Constructor functions also accept these tree hashing parameters:
+The following table shows limits for general parameters (in bytes):
+
+======= =========== ======== ========= ===========
+Hash    digest_size len(key) len(salt) len(person)
+======= =========== ======== ========= ===========
+BLAKE2b     64         64       16        16
+BLAKE2s     32         32       8         8
+======= =========== ======== ========= ===========
+
+.. note::
+
+    BLAKE2 specification defines constant lengths for salt and personalization
+    parameters, however, for convenience, this implementation accepts byte
+    strings of any size up to the specified length. If the length of the
+    parameter is less than specified, it is padded with zeros, thus, for
+    example, ``b'salt'`` and ``b'salt\x00'`` is the same value. (This is not
+    the case for `key`.)
+
+These sizes are available as `module constants`_ described below.
+
+Constructor functions also accept the following tree hashing parameters:
 
 * `fanout`: fanout (0 to 255, 0 if unlimited, 1 in sequential mode).
 
@@ -53,54 +76,15 @@ Constructor functions also accept these tree hashing parameters:
 * `last_node`: boolean indicating whether the processed node is the last
   one (`False` for sequential mode).
 
-The following table shows the maximum sizes of general parameters (in bytes):
+.. figure:: tree.png
+   :alt: Explanation of tree mode parameters.
 
-======= =========== ======== ========= ===========
-Hash    digest_size len(key) len(salt) len(person)
-======= =========== ======== ========= ===========
-BLAKE2b     64         64       16        16
-BLAKE2s     32         32       8         8
-======= =========== ======== ========= ===========
-
-.. note::
-
-    BLAKE2 specification defines constant lengths for salt and personalization
-    parameters, however, for convenience, this implementation accepts byte
-    strings of any size up to the specified length. If the length of the
-    parameter is less than specified, it is padded with zeros, thus, for
-    example, ``b'salt'`` and ``b'salt\x00'`` is the same value. (This is not
-    the case for `key`.)
+See "2.10 Tree hashing" in `BLAKE2 specification
+<https://blake2.net/blake2_20130129.pdf>`_ for comprehensive review.
 
 
-These values are available as module constants:
-
-
-.. data:: BLAKE2B_SALT_SIZE
-.. data:: BLAKE2S_SALT_SIZE
-
-Salt length (maximum length accepted by constructors).
-
-
-.. data:: BLAKE2B_PERSON_SIZE
-.. data:: BLAKE2S_PERSON_SIZE
-
-Personalization string length (maximum length accepted by constructors).
-
-
-.. data:: BLAKE2B_MAX_KEY_SIZE
-.. data:: BLAKE2S_MAX_KEY_SIZE
-
-Maximum key size.
-
-
-.. data:: BLAKE2B_MAX_DIGEST_SIZE
-.. data:: BLAKE2S_MAX_DIGEST_SIZE
-
-Maximum digest size that the hash function can output.
-
-
-Hash objects
-------------
+Using hash objects
+------------------
 
 Hash objects have the following attributes and methods:
 
@@ -142,3 +126,32 @@ length, containing only hexadecimal digits.
 .. method:: hash.copy()
 
 Return a copy of the hash object.
+
+
+Module constants
+----------------
+
+.. data:: BLAKE2B_SALT_SIZE
+.. data:: BLAKE2S_SALT_SIZE
+
+Salt length (maximum length accepted by constructors).
+
+
+.. data:: BLAKE2B_PERSON_SIZE
+.. data:: BLAKE2S_PERSON_SIZE
+
+Personalization string length (maximum length accepted by constructors).
+
+
+.. data:: BLAKE2B_MAX_KEY_SIZE
+.. data:: BLAKE2S_MAX_KEY_SIZE
+
+Maximum key size.
+
+
+.. data:: BLAKE2B_MAX_DIGEST_SIZE
+.. data:: BLAKE2S_MAX_DIGEST_SIZE
+
+Maximum digest size that the hash function can output.
+
+
