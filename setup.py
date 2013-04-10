@@ -16,11 +16,21 @@ salted hashing, personalization, and tree hashing.
 Hash objects from this module follow the API of standard library's
 `hashlib` objects.
 """
+import os
 
-from distutils.core import setup, Extension
+try:
+    from setuptools import setup, Extension
+except ImportError:
+    from distutils.core import setup, Extension
+
+try:
+    readme_content = open(os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), "README")).read()
+except Exception:
+    readme_content = __doc__
 
 pyblake2 = Extension('pyblake2',
-                     define_macros = [
+                     define_macros=[
                          # Which implementation to use for compression function:
                          ('BLAKE2_COMPRESS_REGS', '1'),  # fast portable
                          #('BLAKE2_COMPRESS_SSE2', '1'),  # x86 SSE2 (may be slower than 'regs')
@@ -30,18 +40,18 @@ pyblake2 = Extension('pyblake2',
                          ],
                      # Extra flags.
                      #extra_compile_args = ['-msse4.1'],
-                     sources = [
+                     sources=[
                          'pyblake2module.c',
                          'impl/blake2b.c',
                          'impl/blake2s.c',
                          ],
-                     depends = ['*.h'])
+                     depends=['*.h'])
 
 
 setup(name='pyblake2',
       version='0.9.1',
       description='BLAKE2 hash function extension module',
-      long_description=__doc__,
+      long_description=readme_content,
       author='Dmitry Chestnykh',
       author_email='dmitry@codingrobots.com',
       license='http://creativecommons.org/publicdomain/zero/1.0/',
@@ -63,6 +73,6 @@ setup(name='pyblake2',
             'Programming Language :: Python :: 3.2',
             'Programming Language :: Python :: 3.3',
             'Topic :: Security :: Cryptography'
-          ]
+          ],
+      test_suite='test.test.testsuite',
       )
-
