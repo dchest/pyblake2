@@ -1,45 +1,38 @@
-pyblake2
-========
+pyblake2 — BLAKE2 hash function for Python
+==========================================
 
-!!! BETA VERSION !!!
+pyblake2 is an extension module for Python implementing BLAKE2 hash function.
 
- * Contains BLAKE2b and BLAKE2s.
- * Needs proper documentation.
- * SSE implementations must be manually turned on in setup.py.
+BLAKE2 is a cryptographic hash function, which offers highest security while
+being as fast as MD5 or SHA-1, and comes in two flavors:
 
-!!!
+* BLAKE2b, optimized for 64-bit platforms and produces digests of any size
+  between 1 and 64 bytes,
 
-pyblake2 is a Python extension module implementing BLAKE2 hash functions family
-with hashlib compatible interface.
+* BLAKE2s, optimized for 8- to 32-bit platforms and produces digests of any
+  size between 1 and 32 bytes.
 
-Works with Python 2.6 and 3.x.
+BLAKE2 supports keyed mode (a faster and simpler replacement for HMAC),
+salted hashing, personalization, and tree hashing.
 
-Examples:
-
-    >>> from pyblake2 import blake2s
-    >>> blake2s(b'cats').hexdigest()
-    'c473a8d190c3867bdaf6529e8d8531925e824cff07f17d489233fde665979f0c'
-
-    >>> from pyblake2 import blake2b
-    >>> h = blake2b(digest_size = 20)
-    >>> h.update(b'Take that, Keccak')
-    >>> h.digest()
-    '\x98\xb37\xfa\xf5\xbc\tY\xca\x12\x19\x12\xbd\xfa\xd8\x13z\xf9\xffl'
+Hash objects from this module follow the API of standard library's
+hashlib objects.
 
 
-Constructors:
+HOW TO INSTALL
+--------------
 
-	blake2b(data=b'', digest_size=64, key=b'', salt=b'', person=b'',
-		fanout=1, depth=1, leaf_size=0, node_offset=0, node_depth=0,
-		inner_size=0, last_node=False) -> blake2b object
+    From PyPI:
 
-	blake2s(data=b'', digest_size=32, key=b'', salt=b'', person=b'',
-		fanout=1, depth=1, leaf_size=0, node_offset=0, node_depth=0,
-		inner_size=0, last_node=False) -> blake2s object
+    $ pip install pyblake2
 
-
-INSTALLATION
-
-Download and then:
+    or download source code and run:
 
     $ python setup.py install
+
+
+HOW TO USE
+----------
+
+    See documentation: http://pythonhosted.org/pyblake2/
+
