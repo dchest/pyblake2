@@ -9,4 +9,4 @@ python:
     - "3.3"
 
 script:
-    - python test/test.py
+    - python setup.py test
