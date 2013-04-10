@@ -48,6 +48,9 @@ pyblake2 = Extension('pyblake2',
                      depends=['*.h'])
 
 
+tests_require = [
+    'six']
+
 setup(name='pyblake2',
       version='0.9.1',
       description='BLAKE2 hash function extension module',
@@ -57,6 +60,7 @@ setup(name='pyblake2',
       license='http://creativecommons.org/publicdomain/zero/1.0/',
       url='https://github.com/dchest/pyblake2',
       ext_modules=[pyblake2],
+      tests_require=tests_require,
       classifiers=[
             'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',

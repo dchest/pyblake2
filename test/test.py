@@ -1,5 +1,6 @@
 import sys
 import unittest
+import six
 from pyblake2 import *
 
 #TODO need test vectors for tree mode
@@ -26,7 +27,7 @@ class HashTest(unittest.TestCase):
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
-            self.assertEqual(hc.digest(), bytearray.fromhex(v))
+            self.assertEqual(hc.digest(), bytearray.fromhex(six.u(v)))
 
     def test_empty_bytes(self):
         """
@@ -46,9 +47,9 @@ class BLAKE2bTest(HashTest):
         self.assertRaises(ValueError, blake2b, digest_size=-1)
         self.assertRaises(ValueError, blake2b, digest_size=0)
         self.assertRaises(ValueError, blake2b, digest_size=65)
-        self.assertRaises(ValueError, blake2b, key=b'x' * 65)
-        self.assertRaises(ValueError, blake2b, salt=b'x' * 17)
-        self.assertRaises(ValueError, blake2b, person=b'x' * 17)
+        self.assertRaises(ValueError, blake2b, key=six.b('x') * 65)
+        self.assertRaises(ValueError, blake2b, salt=six.b('x') * 17)
+        self.assertRaises(ValueError, blake2b, person=six.b('x') * 17)
         # Tree
         self.assertRaises(ValueError, blake2b, fanout=-1)
         self.assertRaises(ValueError, blake2b, fanout=256)
@@ -614,9 +615,9 @@ class BLAKE2sTest(HashTest):
 
     def test_constructor(self):
         self.assertRaises(ValueError, lambda: blake2s(digest_size=33))
-        self.assertRaises(ValueError, lambda: blake2s(key=b'x' * 33))
-        self.assertRaises(ValueError, lambda: blake2s(salt=b'x' * 9))
-        self.assertRaises(ValueError, lambda: blake2s(person=b'x' * 9))
+        self.assertRaises(ValueError, lambda: blake2s(key=six.b('x') * 33))
+        self.assertRaises(ValueError, lambda: blake2s(salt=six.b('x') * 9))
+        self.assertRaises(ValueError, lambda: blake2s(person=six.b('x') * 9))
         # Tree
         self.assertRaises(ValueError, blake2s, fanout=-1)
         self.assertRaises(ValueError, blake2s, fanout=256)
