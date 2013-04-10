@@ -190,6 +190,12 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     }
 
 
+static char *kwlist[] = {
+    "data", "digest_size", "key", "salt", "person",
+    "fanout", "depth", "leaf_size", "node_offset",
+    "node_depth", "inner_size", "last_node", NULL
+};
+
 #define DECL_INIT_BLAKE2_OBJECT(name, bigname)                                \
     static int                                                                \
     init_##name##Object(name##Object *self, PyObject *args, PyObject *kw)     \
@@ -204,12 +210,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                                                                               \
         /* Initialize buffers. */                                             \
         key.buf = salt.buf = person.buf = NULL;                               \
-                                                                              \
-        static char *kwlist[] = {                                             \
-            "data", "digest_size", "key", "salt", "person",                   \
-            "fanout", "depth", "leaf_size", "node_offset",                    \
-            "node_depth", "inner_size", "last_node", NULL                     \
-        };                                                                    \
                                                                               \
         /* Parse arguments. */                                                \
         if (!PyArg_ParseTupleAndKeywords(args, kw,                            \
@@ -277,7 +277,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                     "fanout must be between 0 and 255");                      \
             goto err0;                                                        \
         }                                                                     \
-        self->param.fanout = fanout;                                          \
+        self->param.fanout = (uint8_t)fanout;                                 \
                                                                               \
         if (depth_obj != NULL) {                                              \
             depth = COMPAT_PYINT_AS_LONG(depth_obj);                          \
@@ -289,7 +289,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
                     "depth must be between 1 and 255");                       \
             goto err0;                                                        \
         }                                                                     \
-        self->param.depth = depth;                                            \
+        self->param.depth = (uint8_t)depth;                                   \
                                                                               \
         self->param.leaf_length = leaf_size;                                  \
                                                                               \
