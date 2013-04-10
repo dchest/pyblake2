@@ -243,11 +243,11 @@ digest.
     >>> buf = bytearray(6000)
     >>>
     >>> # Left leaf
-    ... h00 = blake2b(buf[0:4096], fanout=FANOUT, depth=DEPTH,
+    ... h00 = blake2b(buf[0:LEAF_SIZE], fanout=FANOUT, depth=DEPTH,
     ...               leaf_size=LEAF_SIZE, inner_size=INNER_SIZE,
     ...               node_offset=0, node_depth=0, last_node=False)
     >>> # Right leaf
-    ... h01 = blake2b(buf[4096:], fanout=FANOUT, depth=DEPTH,
+    ... h01 = blake2b(buf[LEAF_SIZE:], fanout=FANOUT, depth=DEPTH,
     ...               leaf_size=LEAF_SIZE, inner_size=INNER_SIZE,
     ...               node_offset=1, node_depth=0, last_node=True)
     >>> # Root node
