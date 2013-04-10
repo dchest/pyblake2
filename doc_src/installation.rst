@@ -19,6 +19,8 @@ Download
 
 * `pyblake2-0.9.0.tar.gz
   <https://pypi.python.org/packages/source/p/pyblake2/pyblake2-0.9.0.tar.gz>`_
+  (`zip
+  <https://pypi.python.org/packages/source/p/pyblake2/pyblake2-0.9.0.zip>`_)
 
 **Previous versions**
 

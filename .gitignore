@@ -2,4 +2,5 @@
 build/*
 dist/*
 doc/doctrees
+doc/doctest
 MANIFEST

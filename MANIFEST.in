@@ -2,4 +2,4 @@ include test/*.py
 include impl/*.c impl/*.h
 recursive-include doc_src *
 recursive-include doc *
-prune doc/doctrees
+prune doc/doctrees doc/doctest
