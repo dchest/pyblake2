@@ -220,6 +220,18 @@ BLAKE2 can be personalized by passing bytes to the *person* argument:
     >>> h.hexdigest()
     'cf68fb5761b9c44e7878bfb2c4c9aea52264a80b75005e65619778de59f383a3'
 
+Personalization together with the keyed mode can also be used to derive different
+keys from a single one.
+
+    >>> from pyblake2 import blake2s
+    >>> from base64 import b64decode, b64encode
+    >>> orig_key = b64decode('Rm5EPJai72qcK3RGBpW3vPNfZy5OZothY+kHY6h21KM=')
+    >>> enc_key = blake2s(key=orig_key, person=b'kEncrypt').digest()
+    >>> mac_key = blake2s(key=orig_key, person=b'kMAC').digest()
+    >>> print(b64encode(enc_key))
+    rbPb15S/Z9t+agffno5wuhB77VbRi6F9Iv2qIxU7WHw=
+    >>> print(b64encode(mac_key))
+    G9GtHFE1YluXY1zWPlYk1e/nWfu0WSEb0KRcjhDeP/o=
 
 Tree mode
 ---------
