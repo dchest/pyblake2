@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyblake2 — BLAKE2 hash function for Python &mdash; pyblake2 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyblake2 0.9 documentation" href="#" />
+    <link rel="next" title="Module" href="module.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="Module"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">pyblake2 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyblake2-blake2-hash-function-for-python">
+<h1>pyblake2 — BLAKE2 hash function for Python<a class="headerlink" href="#pyblake2-blake2-hash-function-for-python" title="Permalink to this headline">¶</a></h1>
+<p>pyblake2 is an extension module for Python implementing BLAKE2 hash function.</p>
+<p><a class="reference external" href="https://blake2.net">BLAKE2</a> is a cryptographic hash function, which offers highest security while
+being as fast as MD5 or SHA-1, and comes in two flavors:</p>
+<ul class="simple">
+<li><strong>BLAKE2b</strong>, optimized for 64-bit platforms and produces digests of any size
+between 1 and 64 bytes,</li>
+<li><strong>BLAKE2s</strong>, optimized for 8- to 32-bit platforms and produces digests of any
+size between 1 and 32 bytes.</li>
+</ul>
+<p>BLAKE2 supports <strong>keyed mode</strong> (a faster and simpler replacement for <a class="reference external" href="http://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a>),
+<strong>salted hashing</strong>, <strong>personalization</strong>, and <strong>tree hashing</strong>.</p>
+<p>Hash objects from this module follow the API of standard library&#8217;s
+<a class="reference external" href="http://docs.python.org/3.3/library/hashlib.html#hashlib" title="(in Python v3.3)"><tt class="xref py py-mod docutils literal"><span class="pre">hashlib</span></tt></a> objects.</p>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module.html">Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module.html#creating-hash-objects">Creating hash objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#using-hash-objects">Using hash objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#constants">Constants</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#simple-hashing">Simple hashing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#using-different-digest-sizes">Using different digest sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#keyed-hashing">Keyed hashing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#randomized-hashing">Randomized hashing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#personalization">Personalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#tree-mode">Tree mode</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#download">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#development">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#version-history">Version history</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Next topic</h4>
+  <p class="topless"><a href="module.html"
+                        title="next chapter">Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="Module"
+             >next</a> |</li>
+        <li><a href="#">pyblake2 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Dmitry Chestnykh.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

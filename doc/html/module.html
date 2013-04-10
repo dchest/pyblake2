@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module &mdash; pyblake2 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyblake2 0.9 documentation" href="index.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="pyblake2 — BLAKE2 hash function for Python" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="pyblake2 — BLAKE2 hash function for Python"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pyblake2 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-pyblake2">
+<span id="module"></span><h1>Module<a class="headerlink" href="#module-pyblake2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="creating-hash-objects">
+<h2>Creating hash objects<a class="headerlink" href="#creating-hash-objects" title="Permalink to this headline">¶</a></h2>
+<p>New hash objects are created by calling constructor functions:</p>
+<dl class="function">
+<dt id="pyblake2.blake2b">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">blake2b</tt><big>(</big><em>data=b''</em>, <em>digest_size=64</em>, <em>key=b''</em>, <em>salt=b''</em>, <em>person=b''</em>, <em>fanout=1</em>, <em>depth=1</em>, <em>leaf_size=0</em>, <em>node_offset=0</em>, <em>node_depth=0</em>, <em>inner_size=0</em>, <em>last_node=False</em><big>)</big><a class="headerlink" href="#pyblake2.blake2b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyblake2.blake2s">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">blake2s</tt><big>(</big><em>data=b''</em>, <em>digest_size=32</em>, <em>key=b''</em>, <em>salt=b''</em>, <em>person=b''</em>, <em>fanout=1</em>, <em>depth=1</em>, <em>leaf_size=0</em>, <em>node_offset=0</em>, <em>node_depth=0</em>, <em>inner_size=0</em>, <em>last_node=False</em><big>)</big><a class="headerlink" href="#pyblake2.blake2s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>These functions return the corresponding hash objects for calculating
+BLAKE2b or BLAKE2s. They optionally take these general parameters:</p>
+<ul class="simple">
+<li><cite>data</cite>: initial chunk of data to hash, which must be interpretable as buffer
+of bytes.</li>
+<li><cite>digest_size</cite>: size of output digest in bytes.</li>
+<li><cite>key</cite>: key for keyed hashing (up to 64 bytes for BLAKE2b, up to 32 bytes for
+BLAKE2s).</li>
+<li><cite>salt</cite>: salt for randomized hashing (up to 16 bytes for BLAKE2b, up to 8
+bytes for BLAKE2s).</li>
+<li><cite>person</cite>: personalization string (up to 16 bytes for BLAKE2b, up to 8 bytes
+for BLAKE2s).</li>
+</ul>
+<p>The following table shows limits for general parameters (in bytes):</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="24%" />
+<col width="17%" />
+<col width="20%" />
+<col width="24%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Hash</th>
+<th class="head">digest_size</th>
+<th class="head">len(key)</th>
+<th class="head">len(salt)</th>
+<th class="head">len(person)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>BLAKE2b</td>
+<td>64</td>
+<td>64</td>
+<td>16</td>
+<td>16</td>
+</tr>
+<tr class="row-odd"><td>BLAKE2s</td>
+<td>32</td>
+<td>32</td>
+<td>8</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">BLAKE2 specification defines constant lengths for salt and personalization
+parameters, however, for convenience, this implementation accepts byte
+strings of any size up to the specified length. If the length of the
+parameter is less than specified, it is padded with zeros, thus, for
+example, <tt class="docutils literal"><span class="pre">b'salt'</span></tt> and <tt class="docutils literal"><span class="pre">b'salt\x00'</span></tt> is the same value. (This is not
+the case for <cite>key</cite>.)</p>
+</div>
+<p>These sizes are available as module <a class="reference internal" href="#constants">constants</a> described below.</p>
+<p>Constructor functions also accept the following tree hashing parameters:</p>
+<ul class="simple">
+<li><cite>fanout</cite>: fanout (0 to 255, 0 if unlimited, 1 in sequential mode).</li>
+<li><cite>depth</cite>: maximal depth of tree (1 to 255, 255 if unlimited, 1 in
+sequential mode).</li>
+<li><cite>leaf_size</cite>: maximal byte length of leaf (0 to 2**32-1, 0 if unlimited or in
+sequential mode).</li>
+<li><cite>node_offset</cite>: node offset (0 to 2**64-1 for BLAKE2b, 0 to 2**48-1 for
+BLAKE2s, 0 for the first, leftmost, leaf, or in sequential mode).</li>
+<li><cite>node_depth</cite>: node depth (0 to 255, 0 for leaves, or in sequential mode).</li>
+<li><cite>inner_size</cite>: inner digest size (0 to 64 for BLAKE2b, 0 to 32 for
+BLAKE2s, 0 in sequential mode).</li>
+<li><cite>last_node</cite>: boolean indicating whether the processed node is the last
+one (<cite>False</cite> for sequential mode).</li>
+</ul>
+<div class="figure">
+<img alt="Explanation of tree mode parameters." src="_images/tree.png" />
+</div>
+<p>See section 2.10 in <a class="reference external" href="https://blake2.net/blake2_20130129.pdf">BLAKE2 specification</a> for comprehensive review of tree
+hashing.</p>
+</div>
+<div class="section" id="using-hash-objects">
+<h2>Using hash objects<a class="headerlink" href="#using-hash-objects" title="Permalink to this headline">¶</a></h2>
+<p>Hash objects have the following attributes and methods:</p>
+<dl class="data">
+<dt id="pyblake2.hash.digest_size">
+<tt class="descclassname">hash.</tt><tt class="descname">digest_size</tt><a class="headerlink" href="#pyblake2.hash.digest_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The size of the resulting digest in bytes. This is the value given to hash
+object constructor in <cite>digest_size</cite> argument.</p>
+<dl class="data">
+<dt id="pyblake2.hash.block_size">
+<tt class="descclassname">hash.</tt><tt class="descname">block_size</tt><a class="headerlink" href="#pyblake2.hash.block_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The internal block size of the hash algorithm in bytes.</p>
+<dl class="method">
+<dt id="pyblake2.hash.update">
+<tt class="descclassname">hash.</tt><tt class="descname">update</tt><big>(</big><em>arg</em><big>)</big><a class="headerlink" href="#pyblake2.hash.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Update the hash object with the object, which must be interpretable as buffer
+of bytes</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For better multithreading performance, the Python GIL is released for data
+larger than 2047 bytes at hash object creation or on update to allow other
+threads to run.</p>
+</div>
+<dl class="method">
+<dt id="pyblake2.hash.digest">
+<tt class="descclassname">hash.</tt><tt class="descname">digest</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblake2.hash.digest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Return the digest of the data so far.</p>
+<dl class="method">
+<dt id="pyblake2.hash.hexdigest">
+<tt class="descclassname">hash.</tt><tt class="descname">hexdigest</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblake2.hash.hexdigest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Like <tt class="xref py py-meth docutils literal"><span class="pre">digest()</span></tt> except the digest is returned as a string of double
+length, containing only hexadecimal digits.</p>
+<dl class="method">
+<dt id="pyblake2.hash.copy">
+<tt class="descclassname">hash.</tt><tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#pyblake2.hash.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Return a copy of the hash object.</p>
+</div>
+<div class="section" id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="pyblake2.BLAKE2B_SALT_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2B_SALT_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2B_SALT_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="pyblake2.BLAKE2S_SALT_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2S_SALT_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2S_SALT_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Salt length (maximum length accepted by constructors).</p>
+<dl class="data">
+<dt id="pyblake2.BLAKE2B_PERSON_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2B_PERSON_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2B_PERSON_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="pyblake2.BLAKE2S_PERSON_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2S_PERSON_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2S_PERSON_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Personalization string length (maximum length accepted by constructors).</p>
+<dl class="data">
+<dt id="pyblake2.BLAKE2B_MAX_KEY_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2B_MAX_KEY_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2B_MAX_KEY_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="pyblake2.BLAKE2S_MAX_KEY_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2S_MAX_KEY_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2S_MAX_KEY_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Maximum key size.</p>
+<dl class="data">
+<dt id="pyblake2.BLAKE2B_MAX_DIGEST_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2B_MAX_DIGEST_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2B_MAX_DIGEST_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="pyblake2.BLAKE2S_MAX_DIGEST_SIZE">
+<tt class="descclassname">pyblake2.</tt><tt class="descname">BLAKE2S_MAX_DIGEST_SIZE</tt><a class="headerlink" href="#pyblake2.BLAKE2S_MAX_DIGEST_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Maximum digest size that the hash function can output.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module</a><ul>
+<li><a class="reference internal" href="#creating-hash-objects">Creating hash objects</a></li>
+<li><a class="reference internal" href="#using-hash-objects">Using hash objects</a></li>
+<li><a class="reference internal" href="#constants">Constants</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">pyblake2 — BLAKE2 hash function for Python</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter">Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/module.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="pyblake2 — BLAKE2 hash function for Python"
+             >previous</a> |</li>
+        <li><a href="index.html">pyblake2 0.9 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Dmitry Chestnykh.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
