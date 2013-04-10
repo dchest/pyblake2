@@ -22,6 +22,8 @@ implementation, extension code, and this documentation:
    with this software. If not, see
    http://creativecommons.org/publicdomain/zero/1.0/.
 
+.. seealso:: Official BLAKE2 website: https://blake2.net
+
 .. _BLAKE2: https://blake2.net
 .. _BLAKE: https://131002.net/blake/
 .. _SHA-3: http://en.wikipedia.org/wiki/NIST_hash_function_competition
