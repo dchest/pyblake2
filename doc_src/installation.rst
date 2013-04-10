@@ -15,16 +15,9 @@ or download sources and run::
 Download
 --------
 
-**Latest version**
+See list of files here:
 
-* `pyblake2-0.9.0.tar.gz
-  <https://pypi.python.org/packages/source/p/pyblake2/pyblake2-0.9.0.tar.gz>`_
-  (`zip
-  <https://pypi.python.org/packages/source/p/pyblake2/pyblake2-0.9.0.zip>`_)
-
-**Previous versions**
-
-* None.
+        https://pypi.python.org/pypi/pyblake2
 
 
 Development
@@ -39,6 +32,10 @@ not willing to place them into the public domain.)
 
 Version history
 ---------------
+
+0.9.1:
+
+* Fixed Windows build.
 
 0.9.0:
 

@@ -39,7 +39,7 @@ pyblake2 = Extension('pyblake2',
 
 
 setup(name='pyblake2',
-      version='0.9.0',
+      version='0.9.1',
       description='BLAKE2 hash function extension module',
       long_description=LONG_DESC,
       author='Dmitry Chestnykh',
