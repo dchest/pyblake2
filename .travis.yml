@@ -8,5 +8,8 @@ python:
     - "3.2"
     - "3.3"
 
+install:
+    - pip install six
+
 script:
     - python setup.py test
