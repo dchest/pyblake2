@@ -224,13 +224,13 @@ BLAKE2 can be personalized by passing bytes to the *person* argument:
 Tree mode
 ---------
 
-Here's an example of hashing a tree with two leaf nodes::
+Here's an example of hashing a minimal tree with two leaf nodes::
 
        10
       /  \
      00  01
 
-The example uses internal digest size of 64 bytes, and returns 32-byte final
+The example uses 64-byte internal digests, and returns the 32-byte final
 digest.
 
     >>> from pyblake2 import blake2b

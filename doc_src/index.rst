@@ -28,4 +28,5 @@ Contents:
 
    module
    examples
+   installation
    credits
