@@ -53,7 +53,7 @@ BLAKE2s     32         32       8         8
     example, ``b'salt'`` and ``b'salt\x00'`` is the same value. (This is not
     the case for `key`.)
 
-These sizes are available as `module constants`_ described below.
+These sizes are available as module `constants`_ described below.
 
 Constructor functions also accept the following tree hashing parameters:
 
@@ -129,8 +129,8 @@ length, containing only hexadecimal digits.
 Return a copy of the hash object.
 
 
-Module constants
-----------------
+Constants
+---------
 
 .. data:: BLAKE2B_SALT_SIZE
 .. data:: BLAKE2S_SALT_SIZE
