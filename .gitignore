@@ -4,3 +4,7 @@ dist/*
 doc/doctrees
 doc/doctest
 MANIFEST
+*.egg-info/*
+*.pyc
+*.so
+.tox/*

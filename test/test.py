@@ -1,8 +1,10 @@
 import sys
 import unittest
+import six
 from pyblake2 import *
 
 #TODO need test vectors for tree mode
+
 
 class HashTest(unittest.TestCase):
     vectors = []
@@ -25,7 +27,7 @@ class HashTest(unittest.TestCase):
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
-            self.assertEqual(hc.digest(), bytearray.fromhex(v))
+            self.assertEqual(hc.digest(), bytearray.fromhex(six.u(v)))
 
     def test_empty_bytes(self):
         """
@@ -37,28 +39,29 @@ class HashTest(unittest.TestCase):
         h2.update(b'')
         self.assertEqual(h1.digest(), h2.digest())
 
+
 class BLAKE2bTest(HashTest):
     hash = blake2b()
 
     def test_constructor(self):
-        self.assertRaises(ValueError, blake2b, digest_size = -1)
-        self.assertRaises(ValueError, blake2b, digest_size = 0)
-        self.assertRaises(ValueError, blake2b, digest_size = 65)
-        self.assertRaises(ValueError, blake2b, key = b'x'*65)
-        self.assertRaises(ValueError, blake2b, salt = b'x'*17)
-        self.assertRaises(ValueError, blake2b, person = b'x'*17)
+        self.assertRaises(ValueError, blake2b, digest_size=-1)
+        self.assertRaises(ValueError, blake2b, digest_size=0)
+        self.assertRaises(ValueError, blake2b, digest_size=65)
+        self.assertRaises(ValueError, blake2b, key=six.b('x') * 65)
+        self.assertRaises(ValueError, blake2b, salt=six.b('x') * 17)
+        self.assertRaises(ValueError, blake2b, person=six.b('x') * 17)
         # Tree
-        self.assertRaises(ValueError, blake2b, fanout = -1)
-        self.assertRaises(ValueError, blake2b, fanout = 256)
-        self.assertRaises(TypeError,  blake2b, fanout = "str")
-        self.assertRaises(ValueError, blake2b, depth = -1)
-        self.assertRaises(ValueError, blake2b, depth = 0)
-        self.assertRaises(ValueError, blake2b, depth = 256)
-        self.assertRaises(TypeError,  blake2b, depth = "str")
-        self.assertRaises(ValueError, blake2b, node_depth = -1)
-        self.assertRaises(ValueError, blake2b, node_depth = 256)
-        self.assertRaises(ValueError, blake2b, inner_size = -1)
-        self.assertRaises(ValueError, blake2b, inner_size = 65)
+        self.assertRaises(ValueError, blake2b, fanout=-1)
+        self.assertRaises(ValueError, blake2b, fanout=256)
+        self.assertRaises(TypeError,  blake2b, fanout="str")
+        self.assertRaises(ValueError, blake2b, depth=-1)
+        self.assertRaises(ValueError, blake2b, depth=0)
+        self.assertRaises(ValueError, blake2b, depth=256)
+        self.assertRaises(TypeError,  blake2b, depth="str")
+        self.assertRaises(ValueError, blake2b, node_depth=-1)
+        self.assertRaises(ValueError, blake2b, node_depth=256)
+        self.assertRaises(ValueError, blake2b, inner_size=-1)
+        self.assertRaises(ValueError, blake2b, inner_size=65)
         # Must not raise:
         blake2b(digest_size=1)
         blake2b(digest_size=64)
@@ -72,7 +75,6 @@ class BLAKE2bTest(HashTest):
         blake2b(node_depth=255)
         blake2b(inner_size=0)
         blake2b(inner_size=64)
-
 
     def test_constants(self):
         self.assertEqual(BLAKE2B_SALT_SIZE, 16)
@@ -343,11 +345,11 @@ class BLAKE2bTest(HashTest):
         "b96756e57909968f14b796a5d30f4c9d671472cf82c8cfb2caca7ac7a44ca0a14c9842d00c82e337502c94d5960aca4c492ea7b0df919ddf1aada2a275bb10d4",
         "ff0a015e98db9c99f03977710aac3e658c0d896f6d71d618ba79dc6cf72ac75b7c038eb6862dede4543e145413a6368d69f5722c827ba3ef25b6ae6440d39276",
         "5b21c5fd8868367612474fa2e70e9cfa2201ffeee8fafab5797ad58fefa17c9b5b107da4a3db6320baaf2c8617d5a51df914ae88da3867c2d41f0cc14fa67928",
-    ]        
+    ]
 
 
 class BLAKE2bKeyedTest(HashTest):
-    hash = blake2b(key = bytearray(range(64)))
+    hash = blake2b(key=bytearray(range(64)))
     vectors = [
         "10ebb67700b1868efb4417987acf4690ae9d972fb7a590c2f02871799aaa4786b5e996e8f0f4eb981fc214b005f42d2ff4233499391653df7aefcbc13fc51568",
         "961f6dd1e4dd30f63901690c512e78e4b45e4742ed197c3c5e45c549fd25f2e4187b0bc9fe30492b16b0d0bc4ef9b0f34c7003fac09a5ef1532e69430234cebd",
@@ -612,22 +614,22 @@ class BLAKE2sTest(HashTest):
     hash = blake2s()
 
     def test_constructor(self):
-        self.assertRaises(ValueError, lambda: blake2s(digest_size = 33))
-        self.assertRaises(ValueError, lambda: blake2s(key = b'x'*33))
-        self.assertRaises(ValueError, lambda: blake2s(salt = b'x'*9))
-        self.assertRaises(ValueError, lambda: blake2s(person = b'x'*9))
+        self.assertRaises(ValueError, lambda: blake2s(digest_size=33))
+        self.assertRaises(ValueError, lambda: blake2s(key=six.b('x') * 33))
+        self.assertRaises(ValueError, lambda: blake2s(salt=six.b('x') * 9))
+        self.assertRaises(ValueError, lambda: blake2s(person=six.b('x') * 9))
         # Tree
-        self.assertRaises(ValueError, blake2s, fanout = -1)
-        self.assertRaises(ValueError, blake2s, fanout = 256)
-        self.assertRaises(TypeError,  blake2s, fanout = "str")
-        self.assertRaises(ValueError, blake2s, depth = -1)
-        self.assertRaises(ValueError, blake2s, depth = 0)
-        self.assertRaises(ValueError, blake2s, depth = 256)
-        self.assertRaises(TypeError,  blake2s, depth = "str")
-        self.assertRaises(ValueError, blake2s, node_depth = -1)
-        self.assertRaises(ValueError, blake2s, node_depth = 256)
-        self.assertRaises(ValueError, blake2s, inner_size = -1)
-        self.assertRaises(ValueError, blake2s, inner_size = 33)
+        self.assertRaises(ValueError, blake2s, fanout=-1)
+        self.assertRaises(ValueError, blake2s, fanout=256)
+        self.assertRaises(TypeError,  blake2s, fanout="str")
+        self.assertRaises(ValueError, blake2s, depth=-1)
+        self.assertRaises(ValueError, blake2s, depth=0)
+        self.assertRaises(ValueError, blake2s, depth=256)
+        self.assertRaises(TypeError,  blake2s, depth="str")
+        self.assertRaises(ValueError, blake2s, node_depth=-1)
+        self.assertRaises(ValueError, blake2s, node_depth=256)
+        self.assertRaises(ValueError, blake2s, inner_size=-1)
+        self.assertRaises(ValueError, blake2s, inner_size=33)
         # Must not raise:
         blake2s(digest_size=1)
         blake2s(digest_size=32)
@@ -911,11 +913,11 @@ class BLAKE2sTest(HashTest):
         "c2b405afa0fa6668852aee4d88040853fab800e72b57581418e5506f214c7d1f",
         "c08aa1c286d709fdc7473744977188c895ba011014247e4efa8d07e78fec695c",
         "f03f5789d3336b80d002d59fdf918bdb775b00956ed5528e86aa994acb38fe2d",
-    ]            
+    ]
 
 
 class BLAKE2sKeyedTest(HashTest):
-    hash = blake2s(key = bytearray(range(32)))
+    hash = blake2s(key=bytearray(range(32)))
     vectors = [
         "48a8997da407876b3d79c0d92325ad3b89cbb754d86ab71aee047ad345fd2c49",
         "40d15fee7c328830166ac3f918650f807e7e01e177258cdc0a39b11f598066f1",
@@ -1173,7 +1175,8 @@ class BLAKE2sKeyedTest(HashTest):
         "69cb192b8444005c8c0ceb12c846860768188cda0aec27a9c8a55cdee2123632",
         "db444c15597b5f1a03d1f9edd16e4a9f43a667cc275175dfa2b704e3bb1a9b83",
         "3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd",
-    ]    
+    ]
+
 
 def testsuite():
     suite = unittest.TestSuite()
