@@ -22,11 +22,11 @@ hashlib objects.
 HOW TO INSTALL
 --------------
 
-    From PyPI:
+From PyPI:
 
     $ pip install pyblake2
 
-    or download source code and run:
+or download source code and run:
 
     $ python setup.py install
 
@@ -34,5 +34,5 @@ HOW TO INSTALL
 HOW TO USE
 ----------
 
-    See documentation: http://pythonhosted.org/pyblake2/
+See documentation: http://pythonhosted.org/pyblake2/
 
