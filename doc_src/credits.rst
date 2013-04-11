@@ -22,6 +22,12 @@ implementation, extension code, and this documentation:
    with this software. If not, see
    http://creativecommons.org/publicdomain/zero/1.0/.
 
+The following people have helped with development or contributed their changes
+to the project and the public domain according to the Creative Commons Public
+Domain Dedication 1.0 Universal:
+
+* *Alexandr Sokolovskiy*
+
 .. seealso:: Official BLAKE2 website: https://blake2.net
 
 .. _BLAKE2: https://blake2.net
