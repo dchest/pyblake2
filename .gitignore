@@ -1,5 +1,6 @@
 .DS_Store
+MANIFEST
 build/*
 dist/*
 doc/*
-MANIFEST
+.tox/*
