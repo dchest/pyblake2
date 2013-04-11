@@ -1,6 +1,5 @@
 .DS_Store
 build/*
 dist/*
-doc/doctrees
-doc/doctest
+doc/*
 MANIFEST
