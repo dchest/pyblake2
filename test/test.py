@@ -26,7 +26,7 @@ class HashTest(unittest.TestCase):
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
-            self.assertEqual(hc.digest(), binascii.unhexlify(v))
+            self.assertEqual(hc.digest(), binascii.unhexlify(v.encode('utf-8')))
 
     def test_empty_bytes(self):
         """
