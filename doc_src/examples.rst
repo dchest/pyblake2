@@ -30,7 +30,7 @@ You can call :meth:`hash.update` as many times as you need to iteratively
 update the hash:
 
     >>> from pyblake2 import blake2b
-    >>> items = [b'Hello', b' ', 'world']
+    >>> items = [b'Hello', b' ', b'world']
     >>> h = blake2b()
     >>> for item in items:
     ...     h.update(item)
@@ -119,7 +119,7 @@ to users and later verify them to make sure they weren't tampered with:
     True
     >>> verify(b'user:policajac', sig)
     False
-    >>> verify(cookie, b'0102030405060708090a0b0c0d0e0f00')
+    >>> verify(cookie, '0102030405060708090a0b0c0d0e0f00')
     False
 
 Even though there's a native keyed hashing mode, BLAKE2 can, of course, be used
@@ -228,9 +228,9 @@ keys from a single one.
     >>> orig_key = b64decode('Rm5EPJai72qcK3RGBpW3vPNfZy5OZothY+kHY6h21KM=')
     >>> enc_key = blake2s(key=orig_key, person=b'kEncrypt').digest()
     >>> mac_key = blake2s(key=orig_key, person=b'kMAC').digest()
-    >>> print(b64encode(enc_key))
+    >>> print(b64encode(enc_key).decode('utf-8'))
     rbPb15S/Z9t+agffno5wuhB77VbRi6F9Iv2qIxU7WHw=
-    >>> print(b64encode(mac_key))
+    >>> print(b64encode(mac_key).decode('utf-8'))
     G9GtHFE1YluXY1zWPlYk1e/nWfu0WSEb0KRcjhDeP/o=
 
 Tree mode
