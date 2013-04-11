@@ -1,5 +1,7 @@
 include COPYING
+include README.rst
+include MANIFEST.in
+include tox.ini
 graft test
 graft impl
 graft doc_src
-graft doc/html
