@@ -33,6 +33,11 @@ not willing to place them into the public domain.)
 Version history
 ---------------
 
+0.9.2:
+
+* Fixed test under Python 2.6.
+* Removed compiled documentation from source distribution.
+
 0.9.1:
 
 * Fixed Windows build.
