@@ -16,23 +16,27 @@ BLAKE2 supports keyed mode (a faster and simpler replacement for HMAC),
 salted hashing, personalization, and tree hashing.
 
 Hash objects from this module follow the API of standard library's
-hashlib objects.
+`hashlib` objects.
 
 
-HOW TO INSTALL
---------------
+Installation
+------------
 
-From PyPI:
+From PyPI::
 
     $ pip install pyblake2
 
-or download source code and run:
+or download source code and run::
 
     $ python setup.py install
 
 
-HOW TO USE
-----------
+Usage
+-----
 
 See documentation: http://pythonhosted.org/pyblake2/
 
+
+
+.. image:: https://travis-ci.org/dchest/pyblake2.png
+   :alt: Build status

@@ -35,7 +35,8 @@ Version history
 
 0.9.2:
 
-* Fixed test under Python 2.6.
+* Made tests compatible with Python 2.6.
+* Made examples from documentation compatible with Python 3.
 * Removed compiled documentation from source distribution.
 
 0.9.1:
