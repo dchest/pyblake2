@@ -1,5 +1,6 @@
 import sys
 import unittest
+import binascii
 from pyblake2 import *
 
 #TODO need test vectors for tree mode
@@ -25,7 +26,7 @@ class HashTest(unittest.TestCase):
         for i, v in enumerate(self.vectors):
             hc = self.hash.copy()
             hc.update(bytearray(range(i)))
-            self.assertEqual(hc.digest(), bytearray.fromhex(v))
+            self.assertEqual(hc.digest(), binascii.unhexlify(v))
 
     def test_empty_bytes(self):
         """
