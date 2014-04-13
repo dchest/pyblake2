@@ -33,6 +33,10 @@ not willing to place them into the public domain.)
 Version history
 ---------------
 
+0.9.3:
+
+* Build SSE2 implementation on x86_64 architectures by default.
+
 0.9.2:
 
 * Made tests compatible with Python 2.6 and 3.2.

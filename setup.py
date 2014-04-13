@@ -18,15 +18,30 @@ Hash objects from this module follow the API of standard library's
 """
 
 from distutils.core import setup, Extension
+import platform
+
+# Version of optimized implementation to use.
+
+if platform.machine() == "x86_64":
+    # Every x86_64 machine has at least SSE2.
+    opt_version = "BLAKE2_COMPRESS_SSE2"
+else:
+    # Use portable version.
+    opt_version = "BLAKE2_COMPRESS_REGS"
+
+# Full list of available options:
+# You can manually turn on the better one by uncommenting it.
+# Remember to adjust extra_compile_args below.
+
+#opt_version = 'BLAKE2_COMPRESS_REGS'  # fast portable
+#opt_version = 'BLAKE2_COMPRESS_SSE2'  # x86 SSE2
+#opt_version = 'BLAKE2_COMPRESS_SSSE3' # x86 SSSE3
+#opt_version = 'BLAKE2_COMPRESS_AVX'   # x86 AVX
+#opt_version = 'BLAKE2_COMPRESS_XOP'   # x86 XOP
 
 pyblake2 = Extension('pyblake2',
                      define_macros=[
-                         # Which implementation to use for compression function:
-                         ('BLAKE2_COMPRESS_REGS', '1'),  # fast portable
-                         #('BLAKE2_COMPRESS_SSE2', '1'),  # x86 SSE2
-                         #('BLAKE2_COMPRESS_SSSE3', '1'), # x86 SSSE3
-                         #('BLAKE2_COMPRESS_AVX', '1'),   # x86 AVX
-                         #('BLAKE2_COMPRESS_XOP', '1'),   # x86 XOP
+                         (opt_version, '1')
                          ],
                      # Extra flags.
                      #extra_compile_args = ['-msse4.1'],
@@ -39,7 +54,7 @@ pyblake2 = Extension('pyblake2',
 
 
 setup(name='pyblake2',
-      version='0.9.2',
+      version='0.9.3',
       description='BLAKE2 hash function extension module',
       long_description=__doc__,
       author='Dmitry Chestnykh',
