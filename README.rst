@@ -1,6 +1,9 @@
 pyblake2 — BLAKE2 hash function for Python
 ==========================================
 
+.. image:: https://travis-ci.org/dchest/pyblake2.svg
+   :alt: Build status
+
 pyblake2 is an extension module for Python implementing BLAKE2 hash function.
 
 BLAKE2 is a cryptographic hash function, which offers highest security while
@@ -38,5 +41,3 @@ See documentation: http://pythonhosted.org/pyblake2/
 
 
 
-.. image:: https://travis-ci.org/dchest/pyblake2.png
-   :alt: Build status
