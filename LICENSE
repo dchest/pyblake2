@@ -1,0 +1,26 @@
+Written in 2013 by Dmitry Chestnykh <dmitry@codingrobots.com>
+
+To the extent possible under law, the author have dedicated all copyright and
+related and neighboring rights to this software to the public domain worldwide.
+This software is distributed without any warranty.
+
+---
+
+If a twisted mind of your lawyers or your jurisdiction doesn't recognize the
+right of the author to dedicate their copyrights, you can use one of the
+licenses listed below at your own choosing (the condition in the preceeding
+sentence is not required for their use).
+
+---
+
+PYBLAKE2 IS OCTUPLE-LICENSED UNDER THE FOLLOWING LICENSES
+(choose one or several at your own discretion):
+
+* CC0 Universal 1.0 - http://creativecommons.org/publicdomain/zero/1.0
+* Unlicense — http://unlicense.org/
+* WTFPL Version 2 - http://www.wtfpl.net/
+* Apache Public License 2.0 - https://www.apache.org/licenses/LICENSE-2.0
+* OpenSSL License - https://www.openssl.org/source/license.html
+* MIT License - https://opensource.org/licenses/MIT
+* The BSD 3-Clause License - https://opensource.org/licenses/BSD-3-Clause
+* ISC License - https://opensource.org/licenses/ISC
