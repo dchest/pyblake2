@@ -1,7 +1,7 @@
 Installation
 ============
 
-:mod:`pyblake2` works with Python 2.6, 2.7 and 3.x.
+:mod:`pyblake2` works with Python 2.7 and 3.x.
 
 You can install it from PyPi using `pip <https://pypi.python.org/pypi/pip>`_::
 
