@@ -22,12 +22,8 @@ import platform
 
 # Version of optimized implementation to use.
 
-if platform.machine() == "x86_64":
-    # Every x86_64 machine has at least SSE2.
-    opt_version = "BLAKE2_COMPRESS_SSE2"
-else:
-    # Use portable version.
-    opt_version = "BLAKE2_COMPRESS_REGS"
+# Use portable version.
+opt_version = "BLAKE2_COMPRESS_REGS"
 
 # Full list of available options:
 # You can manually turn on the better one by uncommenting it.
