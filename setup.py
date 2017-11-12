@@ -1,6 +1,6 @@
 """
 pyblake2 is an extension module for Python implementing BLAKE2 hash function.
-        
+
 BLAKE2 is a cryptographic hash function, which offers highest security while
 being as fast as MD5 or SHA-1, and comes in two flavors:
 
@@ -50,7 +50,7 @@ pyblake2 = Extension('pyblake2',
 
 
 setup(name='pyblake2',
-      version='0.9.3',
+      version='1.0.0',
       description='BLAKE2 hash function extension module',
       long_description=__doc__,
       author='Dmitry Chestnykh',
@@ -59,7 +59,6 @@ setup(name='pyblake2',
       url='https://github.com/dchest/pyblake2',
       ext_modules=[pyblake2],
       classifiers=[
-          'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
           'Intended Audience :: Information Technology',
           'Intended Audience :: Science/Research',
