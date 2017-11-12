@@ -314,7 +314,7 @@ static char *kwlist[] = {
         self->param.inner_length = inner_size;                                \
                                                                               \
         /* Set key length. */                                                 \
-        if (key.buf != NULL) {                                                \
+        if (key.buf != NULL && key.len > 0) {                                 \
             if (key.len > bigname##_KEYBYTES) {                               \
                 PyErr_Format(PyExc_ValueError,                                \
                     "maximum key length is %d bytes",                         \
@@ -336,7 +336,7 @@ static char *kwlist[] = {
                     PyObject_IsTrue(last_node_obj));                          \
                                                                               \
         /* Process key block if any. */                                       \
-        if (key.buf != NULL) {                                                \
+        if (key.buf != NULL && key.len > 0) {                                 \
             uint8_t block[bigname##_BLOCKBYTES];                              \
             memset(block, 0, sizeof(block));                                  \
             memcpy(block, key.buf, key.len);                                  \
