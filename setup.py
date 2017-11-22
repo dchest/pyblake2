@@ -40,7 +40,8 @@ pyblake2 = Extension('pyblake2',
                          (opt_version, '1')
                          ],
                      # Extra flags.
-                     #extra_compile_args = ['-msse4.1'],
+                     extra_compile_args=['-fno-tree-vectorize'],
+                     #extra_compile_args = ['-fno-tree-vectorize', '-msse4.1'],
                      sources=[
                          'pyblake2module.c',
                          'impl/blake2b.c',
