@@ -155,16 +155,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
 }
 
 /*
- * Some aliases needed for parallel versions.
- * TODO: actually implement parallel versions.
- */
-#define blake2bp_param  blake2b_param
-#define blake2sp_param  blake2s_param
-
-#define blake2bp_set_node_offset    blake2b_set_node_offset
-#define blake2sp_set_node_offset    blake2s_set_node_offset
-
-/*
  * Unleash the macros!
  */
 
