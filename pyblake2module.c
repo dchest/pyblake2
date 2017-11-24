@@ -9,6 +9,7 @@
 
 #include <Python.h>
 
+#include "pyblake2_impl_common.h"
 #include "impl/blake2.h"
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
 
