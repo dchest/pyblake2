@@ -19,7 +19,27 @@ Hash objects from this module follow the API of standard library's
 
 from distutils.core import setup, Extension
 
+# Version of optimized implementation to use.
+
+opt_version = 'BLAKE2_COMPRESS_AUTO'
+
+# By default, pyblake2 automatically selects the optimization based
+# on CPU indicated by CFLAGS. If you'd like to override the default
+# choice, you can uncomment one of the following options. Note that
+# you might need to add additional machine flags via extra_compile_args
+# below.
+
+#opt_version = 'BLAKE2_COMPRESS_REGS'  # fast portable
+#opt_version = 'BLAKE2_COMPRESS_SSE2'  # x86 SSE2 (slow!)
+#opt_version = 'BLAKE2_COMPRESS_SSSE3' # x86 SSSE3
+#opt_version = 'BLAKE2_COMPRESS_AVX'   # x86 AVX
+#opt_version = 'BLAKE2_COMPRESS_XOP'   # x86 XOP
+ 
 pyblake2 = Extension('pyblake2',
+                     define_macros=[
+                         (opt_version, '1')
+                         ],
+                     #extra_compile_args = ['-msse4.1'],
                      sources=[
                          'pyblake2module.c',
                          'blake2b_impl.c',
