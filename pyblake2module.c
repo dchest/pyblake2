@@ -9,6 +9,7 @@
 
 #include <Python.h>
 
+#include "pyblake2_impl_common.h"
 #include "impl/blake2.h"
 #include "impl/blake2-impl.h" /* for secure_zero_memory() and store48() */
 
@@ -153,16 +154,6 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     store48(param->node_offset, offset);
     return 1;
 }
-
-/*
- * Some aliases needed for parallel versions.
- * TODO: actually implement parallel versions.
- */
-#define blake2bp_param  blake2b_param
-#define blake2sp_param  blake2s_param
-
-#define blake2bp_set_node_offset    blake2b_set_node_offset
-#define blake2sp_set_node_offset    blake2s_set_node_offset
 
 /*
  * Unleash the macros!

@@ -1,60 +1,20 @@
+/*
+   BLAKE2 reference source code package - optimized C implementations
+
+   Copyright 2012, Samuel Neves <sneves@dei.uc.pt>.  You may use this under the
+   terms of the CC0, the OpenSSL Licence, or the Apache Public License 2.0, at
+   your option.  The terms of these licenses can be found at:
+
+   - CC0 1.0 Universal : http://creativecommons.org/publicdomain/zero/1.0
+   - OpenSSL license   : https://www.openssl.org/source/license.html
+   - Apache 2.0        : http://www.apache.org/licenses/LICENSE-2.0
+
+   More information about the BLAKE2 hash function can be found at
+   https://blake2.net.
+*/
+#pragma once
 #ifndef __BLAKE2_CONFIG_H__
 #define __BLAKE2_CONFIG_H__
-
-#ifndef _MSC_VER
-# include <stdint.h>
-#else
- typedef unsigned __int8  uint8_t;
- typedef unsigned __int32 uint32_t;
- typedef unsigned __int64 uint64_t;
-# ifndef inline
-#  define inline __forceinline
-# endif
-#endif
-
-// These don't work everywhere
-/*
-#if defined(__SSE2__)
-#define HAVE_SSE2
-#endif
-
-#if defined(__SSSE3__)
-#define HAVE_SSSE3
-#endif
-
-#if defined(__SSE4_1__)
-#define HAVE_SSE41
-#endif
-
-#if defined(__AVX__)
-#define HAVE_AVX
-#endif
-
-#if defined(__XOP__)
-#define HAVE_XOP
-#endif
-*/
-
-#ifdef BLAKE2_COMPRESS_SSE2
-#define BLAKE2_COMPRESS_SSE
-#define HAVE_SSE2
-#endif
-
-#ifdef BLAKE2_COMPRESS_SSSE3
-#define BLAKE2_COMPRESS_SSE
-#define HAVE_SSSE3
-#endif
-
-#ifdef BLAKE2_COMPRESS_AVX
-#define BLAKE2_COMPRESS_SSE
-#define HAVE_AVX
-#endif
-
-#ifdef BLAKE2_COMPRESS_XOP
-#define BLAKE2_COMPRESS_SSE
-#define HAVE_XOP
-#endif
-
 
 #ifdef HAVE_AVX2
 #ifndef HAVE_AVX

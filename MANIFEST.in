@@ -2,6 +2,7 @@ include COPYING
 include README.rst
 include MANIFEST.in
 include tox.ini
+include pyblake2_impl_common.h
 graft test
 graft impl
 graft doc_src
