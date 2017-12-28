@@ -406,15 +406,29 @@ static char *kwlist[] = {
  * is greater than or equal to GIL_MINSIZE.
  */
 # define INNER_UPDATE(name) do {                                    \
-    if (self->lock == NULL && buf.len >= GIL_MINSIZE)               \
+    /* Allocate a lock if we do not have one and want one now. */   \
+    if (self->lock == NULL && buf.len >= GIL_MINSIZE) {             \
         self->lock = PyThread_allocate_lock();                      \
+        if (self->lock == NULL) {                                   \
+            PyErr_SetString(PyExc_MemoryError,                      \
+                            "Unable to allocate thread lock.");     \
+        }                                                           \
+    }                                                               \
                                                                     \
-    if (self->lock != NULL) {                                       \
-       Py_BEGIN_ALLOW_THREADS                                       \
-       PyThread_acquire_lock(self->lock, 1);                        \
-       name##_update(&self->state, buf.buf, buf.len);               \
-       PyThread_release_lock(self->lock);                           \
-       Py_END_ALLOW_THREADS                                         \
+    /* If our buffer is big enough, release the GIL and update. */  \
+    /* Note that if we do not have a lock, we do nothing here.      \
+     * This is okay because we set an error above which will raise  \
+     * an exception.                                                \
+     */                                                             \
+    if (buf.len >= GIL_MINSIZE) {                                   \
+        if (self->lock != NULL) {                                   \
+            Py_BEGIN_ALLOW_THREADS                                  \
+            PyThread_acquire_lock(self->lock, 1);                   \
+            name##_update(&self->state, buf.buf, buf.len);          \
+            PyThread_release_lock(self->lock);                      \
+            Py_END_ALLOW_THREADS                                    \
+        }                                                           \
+    /* If our buffer is small, just update. */                      \
     } else {                                                        \
         name##_update(&self->state, buf.buf, buf.len);              \
     }                                                               \
