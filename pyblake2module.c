@@ -121,11 +121,7 @@ getbuffer(PyObject *obj, Py_buffer *bp) {
 static void
 tohex(char *dst, uint8_t *src, size_t srclen)
 {
-#if PY_VERSION_HEX >= 0x03030000
-# define hexdigits Py_hexdigits
-#else
     static char hexdigits[] = "0123456789abcdef";
-#endif
     size_t i;
 
     for (i = 0; i < srclen; i++) {
