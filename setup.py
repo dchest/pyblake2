@@ -17,7 +17,7 @@ Hash objects from this module follow the API of standard library's
 `hashlib` objects.
 """
 
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 # Version of optimized implementation to use.
 
