@@ -6,6 +6,14 @@ pyblake2 — BLAKE2 hash function for Python
 
 pyblake2 is an extension module for Python implementing BLAKE2 hash function.
 
+  **NOTE:** Python 3.6 and later have native support for
+  `BLAKE2 in hashlib <https://docs.python.org/3.6/library/hashlib.html? highlight=hashlib#hashlib.blake2b>`_
+  derived from this implementation, with compatible API.
+  This module should only be used if you want BLAKE2 in
+  older Python versions, such as 2.7 or 3.5 and earlier.
+  This module will have bug fixes for as long as possible,
+  but no major code changes are planned.
+
 BLAKE2 is a cryptographic hash function, which offers highest security while
 being as fast as MD5 or SHA-1, and comes in two flavors:
 
