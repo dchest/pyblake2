@@ -34,7 +34,7 @@ opt_version = 'BLAKE2_COMPRESS_AUTO'
 #opt_version = 'BLAKE2_COMPRESS_SSSE3' # x86 SSSE3
 #opt_version = 'BLAKE2_COMPRESS_AVX'   # x86 AVX
 #opt_version = 'BLAKE2_COMPRESS_XOP'   # x86 XOP
- 
+
 pyblake2 = Extension('pyblake2',
                      define_macros=[
                          (opt_version, '1')
@@ -49,7 +49,7 @@ pyblake2 = Extension('pyblake2',
 
 
 setup(name='pyblake2',
-      version='1.1.1',
+      version='1.1.2',
       description='BLAKE2 hash function extension module',
       long_description=__doc__,
       author='Dmitry Chestnykh',
@@ -71,6 +71,8 @@ setup(name='pyblake2',
           'Programming Language :: Python :: 3.1',
           'Programming Language :: Python :: 3.2',
           'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
           'Topic :: Security :: Cryptography'
           ]
      )
