@@ -137,7 +137,7 @@ tohex(char *dst, uint8_t *src, size_t srclen)
 static inline int
 blake2b_set_node_offset(blake2b_param *param, uint64_t offset)
 {
-    param->node_offset = offset;
+    store64(&param->node_offset, offset);
     return 1;
 }
 
@@ -147,7 +147,7 @@ blake2s_set_node_offset(blake2s_param *param, uint64_t offset)
     if (offset > 0xFFFFFFFFFFFFULL) /* maximum 2**48 - 1 */
         return 0;
 
-    store48(param->node_offset, offset);
+    store48(&param->node_offset, offset);
     return 1;
 }
 
@@ -278,7 +278,7 @@ static char *kwlist[] = {
         }                                                                     \
         self->param.depth = (uint8_t)depth;                                   \
                                                                               \
-        self->param.leaf_length = leaf_size;                                  \
+        store32(&self->param.leaf_length, leaf_size);                         \
                                                                               \
         if (!name##_set_node_offset(&self->param, node_offset)) {             \
             PyErr_SetString(PyExc_ValueError, "node_offset is too large");    \
