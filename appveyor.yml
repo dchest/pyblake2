@@ -67,9 +67,8 @@ install:
   # Install twine, support for 'bdist_wheel' and update setuptools.
   - "pip install --upgrade wheel setuptools twine"
 
-build:
-  build_script:
-    - "python setup.py install"
+build_script:
+  - "python setup.py install"
 
 test_script:
   # Build the compiled extension and run the project tests
